@@ -28,7 +28,9 @@ class Login : public QDialog
     bool isLineEditEmpty();
     void encodeText(QString& l, QString& p);
     void decodeText(QString &l, QString &p);
-    QByteArray key = "0123456789abcdef";
+    //QByteArray key = "0123456789abcdef";
+    QString iv = "this-is-my-vector";
+    QString key = "0123456789abcdef";
 
 public:
     Login(QWidget *parent = nullptr);

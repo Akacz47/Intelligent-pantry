@@ -20,10 +20,22 @@ class MainWindow : public QMainWindow
     QDialog* loginWindow;
     int id;
     QString login;
+    QSqlQueryModel *model;
+
+    void SetTableView(const QString& str);
+    void ShowResources();
+
+protected:
+    void resizeEvent(QResizeEvent *event) override {
+        QMainWindow::resizeEvent(event);
+        resizeRowsInTableView();
+    }
 
 public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);
     ~MainWindow();
+
+    void resizeRowsInTableView();
 
 private:
     Ui::MainWindow *ui;

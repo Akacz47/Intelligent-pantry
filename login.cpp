@@ -35,6 +35,7 @@ void Login::open_MainWindow()
     hide();
     mw = new MainWindow(login,id,db,this);
     mw->show();
+    mw->resizeRowsInTableView();
 }
 
 bool Login::check_existing_users(bool checkLoginOnly)
@@ -75,18 +76,23 @@ bool Login::isLineEditEmpty()
 
 void Login::encodeText(QString& l, QString& p)
 {
-    QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
-    QByteArray encodedLogin = encryption.encode(l.toUtf8(), key).toHex();
-    QByteArray encodedPassword = encryption.encode(p.toUtf8(), key).toHex();
+    QByteArray hashKey = QCryptographicHash::hash(key.toLocal8Bit(), QCryptographicHash::Sha256);
+    QByteArray hashIV = QCryptographicHash::hash(iv.toLocal8Bit(), QCryptographicHash::Md5);
+    //QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
+    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CBC);
+    QByteArray encodedLogin = encryption.encode(l.toUtf8(), hashKey, hashIV).toHex();
+    QByteArray encodedPassword = encryption.encode(p.toUtf8(), hashKey, hashIV).toHex();
     l = encodedLogin;
     p = encodedPassword;
 }
 
 void Login::decodeText(QString &l, QString &p)
 {
-    QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
-    QByteArray decodedLogin = encryption.decode(QByteArray::fromHex(l.toUtf8()), key);
-    QByteArray decodedPassword = encryption.decode(QByteArray::fromHex(p.toUtf8()), key);
+    QByteArray hashKey = QCryptographicHash::hash(key.toLocal8Bit(), QCryptographicHash::Sha256);
+    QByteArray hashIV = QCryptographicHash::hash(iv.toLocal8Bit(), QCryptographicHash::Md5);
+    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CBC);
+    QByteArray decodedLogin = encryption.decode(QByteArray::fromHex(l.toUtf8()), hashKey, hashIV);
+    QByteArray decodedPassword = encryption.decode(QByteArray::fromHex(p.toUtf8()), hashKey, hashIV);
     l = QString(encryption.removePadding(decodedLogin));
     p = QString(encryption.removePadding(decodedPassword));
 }
