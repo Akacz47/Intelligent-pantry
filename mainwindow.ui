@@ -47,7 +47,7 @@
      </widget>
     </item>
     <item row="4" column="0">
-     <widget class="QPushButton" name="option2Button">
+     <widget class="QPushButton" name="logOutButton">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
         <horstretch>0</horstretch>
@@ -70,7 +70,7 @@
        <enum>Qt::LeftToRight</enum>
       </property>
       <property name="text">
-       <string>Opcja 2</string>
+       <string>Wyloguj</string>
       </property>
      </widget>
     </item>
@@ -114,12 +114,24 @@
     </property>
     <addaction name="actionOption_3"/>
    </widget>
+   <widget class="QMenu" name="menuSk_adniki">
+    <property name="title">
+     <string>Składniki</string>
+    </property>
+    <addaction name="actionIngrAdd"/>
+   </widget>
    <addaction name="menuMenu"/>
+   <addaction name="menuSk_adniki"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
    <property name="text">
     <string>Opcja 3</string>
+   </property>
+  </action>
+  <action name="actionIngrAdd">
+   <property name="text">
+    <string>Dodaj</string>
    </property>
   </action>
  </widget>

@@ -8,7 +8,6 @@
 #include <QtSql/QSqlQueryModel>
 #include <QMessageBox>
 
-
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
@@ -21,6 +20,7 @@ class MainWindow : public QMainWindow
     int id;
     QString login;
     QSqlQueryModel *model;
+    bool logOutClicked;
 
     void SetTableView(const QString& str);
     void ShowResources();
@@ -36,6 +36,12 @@ public:
     ~MainWindow();
 
     void resizeRowsInTableView();
+    void setUserData(QString l, int id);
+
+private slots:
+    void on_logOutButton_clicked();
+
+    void on_actionIngrAdd_triggered();
 
 private:
     Ui::MainWindow *ui;

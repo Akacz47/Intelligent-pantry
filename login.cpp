@@ -7,6 +7,7 @@ Login::Login(QWidget *parent) :
     ui(new Ui::Login)
 {
     ui->setupUi(this);
+    mw = nullptr;
     db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
     db->setHostName("db.zut.edu.pl");
     db->setUserName("pa51074");
@@ -27,11 +28,14 @@ Login::~Login()
         db = nullptr;
         QSqlDatabase::removeDatabase("qt_sql_default_connection");
     }
+    mw=nullptr;
     delete ui;
+    qDebug() << "Jestem w Logowaniu";
 }
 
 void Login::open_MainWindow()
 {
+    mw = nullptr;
     hide();
     mw = new MainWindow(login,id,db,this);
     mw->show();

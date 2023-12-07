@@ -10,17 +10,20 @@ CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+    ingredients.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
     qaesencryption.cpp
 
 HEADERS += \
+    ingredients.h \
     login.h \
     mainwindow.h \
     qaesencryption.h
 
 FORMS += \
+    ingredients.ui \
     login.ui \
     mainwindow.ui
 
