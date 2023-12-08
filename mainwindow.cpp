@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "ingredients.h"
+#include "recipes.h"
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent)
     : QMainWindow(parent)
@@ -89,3 +90,10 @@ void MainWindow::on_actionIngrAdd_triggered()
     Ingredients ingr(db,id,this);
     ingr.exec();
 }
+
+void MainWindow::on_actionRecipesAdd_triggered()
+{
+    Recipes recipes(db,id,this);
+    recipes.exec();
+}
+

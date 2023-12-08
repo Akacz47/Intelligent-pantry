@@ -43,6 +43,8 @@ private slots:
 
     void on_actionIngrAdd_triggered();
 
+    void on_actionRecipesAdd_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

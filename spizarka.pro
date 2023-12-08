@@ -10,22 +10,27 @@ CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+    baseclass.cpp \
     ingredients.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
-    qaesencryption.cpp
+    qaesencryption.cpp \
+    recipes.cpp
 
 HEADERS += \
+    baseclass.h \
     ingredients.h \
     login.h \
     mainwindow.h \
-    qaesencryption.h
+    qaesencryption.h \
+    recipes.h
 
 FORMS += \
     ingredients.ui \
     login.ui \
-    mainwindow.ui
+    mainwindow.ui \
+    recipes.ui
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin

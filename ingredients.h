@@ -1,27 +1,19 @@
 #ifndef INGREDIENTS_H
 #define INGREDIENTS_H
 
-#include <QtSql/QSql>
-#include <QtSql/QSqlDatabase>
-#include <QtSql/QSqlQuery>
-#include <QtSql/QSqlQueryModel>
-#include <QDialog>
-#include <QTimer>
+#include "baseclass.h"
 
 namespace Ui {
 class Ingredients;
 }
 
-class Ingredients : public QDialog
+class Ingredients : public BaseClass
 {
     Q_OBJECT
-    QSqlDatabase* db;
-    QSqlQueryModel* model;
-    int id;
-    QTimer* timer;
+
 
     void runNotification(QString, bool);
-    bool doesTheIngredientExist();
+    QTimer* timer;
 
 public:
     explicit Ingredients(QSqlDatabase* db, int id,QWidget *parent = nullptr);
