@@ -9,7 +9,7 @@ Ingredients::Ingredients(QSqlDatabase* db, int id, QWidget *parent) :
     ui->setupUi(this);
     timer = new QTimer(this);
 
-    connect(timer,&QTimer::timeout,[=]() { timer->stop(); ui->notificationLabel->setText(""); }); //[=] jest po to, aby ui było widoczne
+    connect(timer,&QTimer::timeout,[&]() { timer->stop(); ui->notificationLabel->setText(""); }); //[=] jest po to, aby ui było widoczne
     setWindowTitle("Składniki");
 }
 

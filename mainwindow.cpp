@@ -88,12 +88,14 @@ void MainWindow::on_logOutButton_clicked()
 void MainWindow::on_actionIngrAdd_triggered()
 {
     Ingredients ingr(db,id,this);
+    ingr.setModal(true);
     ingr.exec();
 }
 
 void MainWindow::on_actionRecipesAdd_triggered()
 {
     Recipes recipes(db,id,this);
+    recipes.setModal(true);
     recipes.exec();
 }
 
