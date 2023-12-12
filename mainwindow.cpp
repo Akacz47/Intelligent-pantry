@@ -2,6 +2,7 @@
 #include "ui_mainwindow.h"
 #include "ingredients.h"
 #include "recipes.h"
+#include "resources.h"
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent)
     : QMainWindow(parent)
@@ -97,5 +98,13 @@ void MainWindow::on_actionRecipesAdd_triggered()
     Recipes recipes(db,id,this);
     recipes.setModal(true);
     recipes.exec();
+}
+
+
+void MainWindow::on_actionResDodaj_triggered()
+{
+    Resources res(db,id,this);
+    res.setModal(true);
+    res.exec();
 }
 

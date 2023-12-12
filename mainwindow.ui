@@ -126,9 +126,16 @@
     </property>
     <addaction name="actionRecipesAdd"/>
    </widget>
+   <widget class="QMenu" name="menuZasoby">
+    <property name="title">
+     <string>Zasoby</string>
+    </property>
+    <addaction name="actionResDodaj"/>
+   </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
+   <addaction name="menuZasoby"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
@@ -142,6 +149,11 @@
    </property>
   </action>
   <action name="actionRecipesAdd">
+   <property name="text">
+    <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionResDodaj">
    <property name="text">
     <string>Dodaj</string>
    </property>

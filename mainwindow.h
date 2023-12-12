@@ -45,6 +45,8 @@ private slots:
 
     void on_actionRecipesAdd_triggered();
 
+    void on_actionResDodaj_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

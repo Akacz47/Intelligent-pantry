@@ -16,7 +16,8 @@ SOURCES += \
     main.cpp \
     mainwindow.cpp \
     qaesencryption.cpp \
-    recipes.cpp
+    recipes.cpp \
+    resources.cpp
 
 HEADERS += \
     baseclass.h \
@@ -24,13 +25,15 @@ HEADERS += \
     login.h \
     mainwindow.h \
     qaesencryption.h \
-    recipes.h
+    recipes.h \
+    resources.h
 
 FORMS += \
     ingredients.ui \
     login.ui \
     mainwindow.ui \
-    recipes.ui
+    recipes.ui \
+    resources.ui
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin
