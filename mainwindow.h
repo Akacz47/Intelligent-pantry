@@ -47,6 +47,8 @@ private slots:
 
     void on_actionResDodaj_triggered();
 
+    void on_actionUsu_triggered();
+
 private:
     Ui::MainWindow *ui;
 };

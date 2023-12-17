@@ -6,12 +6,11 @@ Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
     ui(new Ui::Resources)
 {
     ui->setupUi(this);
-    connect(ui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
+    //connect(ui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
-    ui->spinBox->setMinimum(1);
-    ui->spinBox->setMaximum(9999);
-    connect(ui->spinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged(int)));
+    //connect(ui->spinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged(int)));
+    ui->spinBox->value();
 }
 
 Resources::~Resources()
@@ -35,7 +34,7 @@ int Resources::getResourceQuantity(int resourceId) {
 
 void Resources::updateResourceQuantity(int resourceId, int quantity) {
     QSqlQuery query;
-    query.prepare("UPDATE resources SET quantity = quantity + ? WHERE id = ?");
+    query.prepare("UPDATE resources SET quantity = quantity + ? WHERE ingrOrCraftId = ?");
     query.addBindValue(quantity);
     query.addBindValue(resourceId);
 
@@ -144,10 +143,8 @@ QString resourceName = ui->resourcesNameLineEdit->text();
 
     int currentQuantity = getResourceQuantity(resourceId);
     if (currentQuantity > 0) {
-        updateResourceQuantity(resourceId, currentQuantity + quantity);
+        updateResourceQuantity(resourceId, quantity);
     } else {
         addNewResource(resourceId, quantity, isIngredientFlag);
     }
-
-    //this->accept();
 }

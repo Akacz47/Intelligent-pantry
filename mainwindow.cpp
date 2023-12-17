@@ -108,3 +108,11 @@ void MainWindow::on_actionResDodaj_triggered()
     res.exec();
 }
 
+
+void MainWindow::on_actionUsu_triggered()
+{
+    Resources res(db,id,this);
+    res.setModal(true);
+    res.exec();
+}
+

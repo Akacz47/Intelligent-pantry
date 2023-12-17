@@ -131,6 +131,7 @@
      <string>Zasoby</string>
     </property>
     <addaction name="actionResDodaj"/>
+    <addaction name="actionUsu"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuSk_adniki"/>
@@ -156,6 +157,11 @@
   <action name="actionResDodaj">
    <property name="text">
     <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionUsu">
+   <property name="text">
+    <string>Usuń</string>
    </property>
   </action>
  </widget>
