@@ -23,7 +23,7 @@ class MainWindow : public QMainWindow
     bool logOutClicked;
 
     void SetTableView(const QString& str);
-    void ShowResources();
+    //void ShowResources();
 
 protected:
     void resizeEvent(QResizeEvent *event) override {
@@ -35,7 +35,7 @@ public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);
     ~MainWindow();
 
-    void resizeRowsInTableView();
+    //void resizeRowsInTableView();
     void setUserData(QString l, int id);
 
 private slots:
@@ -47,9 +47,13 @@ private slots:
 
     void on_actionResDodaj_triggered();
 
-    void on_actionUsu_triggered();
+    void on_actionResUsun_triggered();
 
 private:
     Ui::MainWindow *ui;
+public slots:
+void resizeRowsInTableView();
+void ShowResources();
+
 };
 #endif // MAINWINDOW_H

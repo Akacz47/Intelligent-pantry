@@ -55,9 +55,9 @@
   <widget class="QLineEdit" name="resourcesNameLineEdit">
    <property name="geometry">
     <rect>
-     <x>90</x>
+     <x>100</x>
      <y>30</y>
-     <width>321</width>
+     <width>311</width>
      <height>21</height>
     </rect>
    </property>
@@ -65,9 +65,9 @@
   <widget class="QSpinBox" name="spinBox">
    <property name="geometry">
     <rect>
-     <x>91</x>
+     <x>101</x>
      <y>60</y>
-     <width>321</width>
+     <width>311</width>
      <height>25</height>
     </rect>
    </property>
@@ -81,14 +81,14 @@
   <widget class="QLabel" name="label">
    <property name="geometry">
     <rect>
-     <x>18</x>
+     <x>8</x>
      <y>60</y>
-     <width>61</width>
+     <width>91</width>
      <height>20</height>
     </rect>
    </property>
    <property name="text">
-    <string>Ilość</string>
+    <string>Ilość do dodania</string>
    </property>
   </widget>
  </widget>

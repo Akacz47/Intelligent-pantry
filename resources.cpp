@@ -1,16 +1,20 @@
-#include "resources.h"
+﻿#include "resources.h"
 #include "ui_resources.h"
+#include "mainwindow.h"
 
 Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
     BaseClass(db, id, parent),
     ui(new Ui::Resources)
 {
     ui->setupUi(this);
-    //connect(ui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-
-    //connect(ui->spinBox, SIGNAL(valueChanged(int)), this, SLOT(onSpinBoxValueChanged(int)));
     ui->spinBox->value();
+
+    MainWindow* mainWindow = qobject_cast<MainWindow*>(parent);
+    if (mainWindow) {
+        connect(this, SIGNAL(resourcesUpdated()), mainWindow, SLOT(ShowResources()));
+        connect(this, SIGNAL(resourcesUpdated()), mainWindow, SLOT(resizeRowsInTableView()));
+    }
 }
 
 Resources::~Resources()
@@ -42,6 +46,7 @@ void Resources::updateResourceQuantity(int resourceId, int quantity) {
         QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować ilości zasobu.");
     } else {
         QMessageBox::information(this, "Sukces", "Ilość zasobu została zaktualizowana.");
+        emit resourcesUpdated();
     }
 }
 bool Resources::isIngredient(QString resourceName) {
@@ -121,6 +126,7 @@ void Resources::addNewResource(int resourceId, int quantity, bool isIngredient) 
         QMessageBox::critical(this, "Błąd", "Nie udało się dodać zasobu do bazy danych.");
     } else {
         QMessageBox::information(this, "Sukces", "Zasób został dodany.");
+        emit resourcesUpdated();
     }
 }
 

@@ -3,6 +3,7 @@
 #include "ingredients.h"
 #include "recipes.h"
 #include "resources.h"
+#include "removeresources.h"
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent)
     : QMainWindow(parent)
@@ -109,9 +110,9 @@ void MainWindow::on_actionResDodaj_triggered()
 }
 
 
-void MainWindow::on_actionUsu_triggered()
+void MainWindow::on_actionResUsun_triggered()
 {
-    Resources res(db,id,this);
+    RemoveResources res(db, id, this);
     res.setModal(true);
     res.exec();
 }

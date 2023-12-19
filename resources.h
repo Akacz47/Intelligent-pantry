@@ -18,14 +18,17 @@ public:
     ~Resources();
 private slots:
     void on_okButton_clicked();
-    int getResourceQuantity(int resourceId);
     void updateResourceQuantity(int resourceId, int quantity);
     void addNewResource(int resourceId, int quantity, bool isIngredient);
+public slots:
     bool isIngredient(QString resourceName);
     bool isRecipe(QString resourceName);
     int getResourceId(QString resourceName, bool& isIngredient);
     int getIngredientId(QString ingredientName);
     int getRecipeId(QString recipeName);
+    int getResourceQuantity(int resourceId);
+signals:
+    void resourcesUpdated();
 private:
     Ui::Resources *ui;
 };

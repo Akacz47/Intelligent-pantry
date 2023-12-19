@@ -17,6 +17,7 @@ SOURCES += \
     mainwindow.cpp \
     qaesencryption.cpp \
     recipes.cpp \
+    removeresources.cpp \
     resources.cpp
 
 HEADERS += \
@@ -26,6 +27,7 @@ HEADERS += \
     mainwindow.h \
     qaesencryption.h \
     recipes.h \
+    removeresources.h \
     resources.h
 
 FORMS += \
@@ -33,6 +35,7 @@ FORMS += \
     login.ui \
     mainwindow.ui \
     recipes.ui \
+    removeresources.ui \
     resources.ui
 
 # Default rules for deployment.
