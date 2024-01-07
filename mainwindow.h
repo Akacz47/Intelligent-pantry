@@ -67,6 +67,8 @@ private slots:
 
     void on_tableView_activated(const QModelIndex &index);
 
+    void on_deleteIngrButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 public slots:
