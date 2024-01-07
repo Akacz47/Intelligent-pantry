@@ -4,6 +4,7 @@
 #include <QDialog>
 #include <QMessageBox>
 #include "baseclass.h"
+#include "mainwindow.h"
 
 namespace Ui {
 class Resources;
@@ -12,6 +13,7 @@ class Resources;
 class Resources : public BaseClass
 {
     Q_OBJECT
+    MainWindow* mainWindow;
 
 public:
     explicit Resources(QSqlDatabase* db, int id,QWidget *parent = nullptr);

@@ -1,6 +1,5 @@
 ﻿#include "resources.h"
 #include "ui_resources.h"
-#include "mainwindow.h"
 
 Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
     BaseClass(db, id, parent),
@@ -10,7 +9,7 @@ Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
     ui->spinBox->value();
 
-    MainWindow* mainWindow = qobject_cast<MainWindow*>(parent);
+    mainWindow = qobject_cast<MainWindow*>(parent);
     if (mainWindow) {
         connect(this, SIGNAL(resourcesUpdated()), mainWindow, SLOT(ShowResources()));
         connect(this, SIGNAL(resourcesUpdated()), mainWindow, SLOT(resizeRowsInTableView()));
@@ -20,6 +19,7 @@ Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
 Resources::~Resources()
 {
     delete ui;
+    mainWindow = nullptr;
 }
 
 

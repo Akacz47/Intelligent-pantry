@@ -20,6 +20,8 @@ MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent)
 
     model = new QSqlQueryModel();
     ShowResources();
+    currentlyViewedData = CurrentlyViewedData::Resources;
+    suggestedRecipeToPrepare = "";
 }
 
 void MainWindow::SetTableView(const QString& str)
@@ -29,8 +31,19 @@ void MainWindow::SetTableView(const QString& str)
     resizeRowsInTableView();
 }
 
+void MainWindow::SuggestButtonSwitchEnable()
+{
+    if (currentlyViewedData == CurrentlyViewedData::SuggestedCraftings){
+        ui->deleteIngrButton->show();
+    }else{
+        ui->deleteIngrButton->hide();
+    }
+    suggestedRecipeToPrepare = "";
+}
+
 void MainWindow::ShowResources()
 {
+    SuggestButtonSwitchEnable();
 //    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'ilosc sztuk' FROM "
 //                       "( SELECT CASE WHEN resources.craftId IS NULL THEN ingredients.name ELSE crafting.name END AS name, resources.quantity FROM "
 //                       "resources LEFT JOIN crafting ON crafting.id = resources.craftId "
@@ -49,11 +62,11 @@ void MainWindow::ShowResources()
     question += " GROUP BY name) AS podzapytanie";
 
     SetTableView(question);
+    currentlyViewedData = CurrentlyViewedData::Resources;
 }
 
 MainWindow::~MainWindow()
 {
-
     delete ui;
     delete model;
     if(!logOutClicked)
@@ -115,5 +128,56 @@ void MainWindow::on_actionResUsun_triggered()
     RemoveResources res(db, id, this);
     res.setModal(true);
     res.exec();
+}
+
+void MainWindow::on_suggetButton_clicked()
+{
+    QString question = "SELECT crafting.name, FLOOR(MIN(resources.quantity / crafting_ingredients.quantity)) AS ilość "
+                       "FROM crafting "
+                       "JOIN crafting_ingredients ON crafting.id = crafting_ingredients.craftingId "
+                       "JOIN resources ON crafting_ingredients.ingredientId = resources.ingrOrCraftId "
+                       "WHERE resources.userId = 0 OR resources.userId = ";
+                       question += QString::number(id);
+                       question += " AND resources.ingrOrCraftBool = 0 "
+                       "AND crafting.id IN ( "
+                            "SELECT crafting.id "
+                            "FROM crafting "
+                            "JOIN crafting_ingredients ON crafting.id = crafting_ingredients.craftingId "
+                            "JOIN resources ON crafting_ingredients.ingredientId = resources.ingrOrCraftId "
+                            "WHERE (resources.userId = 0 OR resources.userId = ";
+                            question += QString::number(id);
+                            question += ") AND resources.ingrOrCraftBool = 0 "
+                            "GROUP BY crafting.id "
+                            "HAVING COUNT(DISTINCT crafting_ingredients.ingredientId) = ( "
+                                "SELECT COUNT(*) "
+                                "FROM crafting_ingredients "
+                                "WHERE craftingId = crafting.id ) "
+                            "AND MIN(resources.quantity >= crafting_ingredients.quantity) = 1 ) "
+                       "GROUP BY crafting.id, crafting.name;";
+
+    SetTableView(question);
+    if (ui->tableView->model()->rowCount() == 0) {
+        QMessageBox::information(this, "Informacja", "Nie znaleziono sugestii");
+    }
+    else {
+        currentlyViewedData = CurrentlyViewedData::SuggestedCraftings;
+        SuggestButtonSwitchEnable();
+    }
+}
+
+
+void MainWindow::on_tableView_activated(const QModelIndex &index)
+{
+    if(currentlyViewedData == CurrentlyViewedData::SuggestedCraftings) {
+        suggestedRecipeToPrepare = index.model()->data(index.model()->index(index.row(), 0)).toString();
+    }
+}
+
+
+void MainWindow::on_deleteIngrButton_clicked()
+{
+    if(suggestedRecipeToPrepare != ""){
+
+    }
 }
 
