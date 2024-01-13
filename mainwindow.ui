@@ -129,12 +129,14 @@
      <string>Składniki</string>
     </property>
     <addaction name="actionIngrAdd"/>
+    <addaction name="actionPrintIngr"/>
    </widget>
    <widget class="QMenu" name="menuPrzepisy">
     <property name="title">
      <string>Przepisy</string>
     </property>
     <addaction name="actionRecipesAdd"/>
+    <addaction name="actionPrintRecipes"/>
    </widget>
    <widget class="QMenu" name="menuZasoby">
     <property name="title">
@@ -142,6 +144,7 @@
     </property>
     <addaction name="actionResDodaj"/>
     <addaction name="actionResUsun"/>
+    <addaction name="actionPrintResources"/>
    </widget>
    <addaction name="menuMenu"/>
    <addaction name="menuSk_adniki"/>
@@ -172,6 +175,21 @@
   <action name="actionResUsun">
    <property name="text">
     <string>Usuń</string>
+   </property>
+  </action>
+  <action name="actionPrintResources">
+   <property name="text">
+    <string>Wyświetl</string>
+   </property>
+  </action>
+  <action name="actionPrintRecipes">
+   <property name="text">
+    <string>Wyświetl</string>
+   </property>
+  </action>
+  <action name="actionPrintIngr">
+   <property name="text">
+    <string>Wyświetl</string>
    </property>
   </action>
  </widget>

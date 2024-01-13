@@ -22,6 +22,8 @@ MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent)
     ShowResources();
     currentlyViewedData = CurrentlyViewedData::Resources;
     suggestedRecipeToPrepare = "";
+
+    connectActionTriggered();
 }
 
 void MainWindow::SetTableView(const QString& str)
@@ -41,14 +43,30 @@ void MainWindow::SuggestButtonSwitchEnable()
     suggestedRecipeToPrepare = "";
 }
 
+void MainWindow::connectActionTriggered()
+{
+    connect(ui->actionIngrAdd,&QAction::triggered, this,[=]() { Ingredients ingr(db,id,this); OpenWindow(&ingr); });
+    connect(ui->actionRecipesAdd,&QAction::triggered, this,[=]() { Recipes recipes(db,id,this); OpenWindow(&recipes); });
+    connect(ui->actionResDodaj,&QAction::triggered, this,[=]() { Resources resources(db,id,this); OpenWindow(&resources); });
+    connect(ui->actionResUsun,&QAction::triggered, this,[=]() { RemoveResources removeResources(db,id,this); OpenWindow(&removeResources); });
+    connect(ui->actionPrintIngr,&QAction::triggered, this, &MainWindow::ShowIngredients);
+    connect(ui->actionPrintRecipes,&QAction::triggered, this, &MainWindow::ShowRecipes);
+    connect(ui->actionPrintResources,&QAction::triggered, this, &MainWindow::ShowResources);
+}
+
+void MainWindow::OpenWindow(BaseClass* reference)
+{
+    reference->setModal(true);
+    reference->exec();
+}
+
 void MainWindow::ShowResources()
 {
-    SuggestButtonSwitchEnable();
+    //zapytanie ktore dzialalo, gdy w tabeli sa null'e
 //    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'ilosc sztuk' FROM "
 //                       "( SELECT CASE WHEN resources.craftId IS NULL THEN ingredients.name ELSE crafting.name END AS name, resources.quantity FROM "
 //                       "resources LEFT JOIN crafting ON crafting.id = resources.craftId "
 //                       "LEFT JOIN ingredients ON ingredients.id = resources.ingrId "
-
 //                       "WHERE resources.userId = ";
 //    question += QString::number(id);
 //    question += " GROUP BY name) AS podzapytanie";
@@ -63,6 +81,25 @@ void MainWindow::ShowResources()
 
     SetTableView(question);
     currentlyViewedData = CurrentlyViewedData::Resources;
+    SuggestButtonSwitchEnable();
+}
+
+void MainWindow::ShowIngredients()
+{
+    QString question = "SELECT name AS 'nazwa' FROM ingredients WHERE userId = 0 OR userId = ";
+    question += QString::number(id);
+    SetTableView(question);
+    currentlyViewedData = CurrentlyViewedData::Ingredients;
+    SuggestButtonSwitchEnable();
+}
+
+void MainWindow::ShowRecipes()
+{
+    QString question = "SELECT name AS 'nazwa' FROM crafting WHERE userId = 0 OR userId = ";
+    question += QString::number(id);
+    SetTableView(question);
+    currentlyViewedData = CurrentlyViewedData::Craftings;
+    SuggestButtonSwitchEnable();
 }
 
 MainWindow::~MainWindow()
@@ -97,37 +134,7 @@ void MainWindow::on_logOutButton_clicked()
 {
     logOutClicked = true;
     loginWindow->show();
-    this->deleteLater();
-}
-
-void MainWindow::on_actionIngrAdd_triggered()
-{
-    Ingredients ingr(db,id,this);
-    ingr.setModal(true);
-    ingr.exec();
-}
-
-void MainWindow::on_actionRecipesAdd_triggered()
-{
-    Recipes recipes(db,id,this);
-    recipes.setModal(true);
-    recipes.exec();
-}
-
-
-void MainWindow::on_actionResDodaj_triggered()
-{
-    Resources res(db,id,this);
-    res.setModal(true);
-    res.exec();
-}
-
-
-void MainWindow::on_actionResUsun_triggered()
-{
-    RemoveResources res(db, id, this);
-    res.setModal(true);
-    res.exec();
+    this->close();
 }
 
 void MainWindow::on_suggetButton_clicked()

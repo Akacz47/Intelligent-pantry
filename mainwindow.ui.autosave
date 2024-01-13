@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MainWindow</class>
+ <widget class="QMainWindow" name="MainWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>750</width>
+    <height>434</height>
+   </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>400</width>
+    <height>200</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>750</width>
+    <height>500</height>
+   </size>
+  </property>
+  <property name="windowTitle">
+   <string>MainWindow</string>
+  </property>
+  <widget class="QWidget" name="centralwidget">
+   <property name="minimumSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
+   <layout class="QGridLayout" name="gridLayout">
+    <item row="7" column="1">
+     <widget class="QPushButton" name="suggetButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Sugeruj przepis</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
+     <widget class="QPushButton" name="logOutButton">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="sizeIncrement">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="baseSize">
+       <size>
+        <width>0</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="layoutDirection">
+       <enum>Qt::LeftToRight</enum>
+      </property>
+      <property name="text">
+       <string>Wyloguj</string>
+      </property>
+     </widget>
+    </item>
+    <item row="2" column="1">
+     <widget class="QTableView" name="tableView">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+     </widget>
+    </item>
+    <item row="1" column="1">
+     <widget class="QLabel" name="welcomeLabel">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Minimum" vsizetype="Maximum">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="text">
+       <string>Witaj:</string>
+      </property>
+      <property name="alignment">
+       <set>Qt::AlignCenter</set>
+      </property>
+     </widget>
+    </item>
+    <item row="3" column="1">
+     <widget class="QPushButton" name="deleteIngrButton">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Usuń składniki składające się z tego przepisu</string>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menubar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>750</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSk_adniki">
+    <property name="title">
+     <string>Składniki</string>
+    </property>
+    <addaction name="actionIngrAdd"/>
+    <addaction name="actionPrintIngr"/>
+   </widget>
+   <widget class="QMenu" name="menuPrzepisy">
+    <property name="title">
+     <string>Przepisy</string>
+    </property>
+    <addaction name="actionRecipesAdd"/>
+    <addaction name="actionPrintRecipes"/>
+   </widget>
+   <widget class="QMenu" name="menuZasoby">
+    <property name="title">
+     <string>Zasoby</string>
+    </property>
+    <addaction name="actionResDodaj"/>
+    <addaction name="actionResUsun"/>
+    <addaction name="actionPrintResources"/>
+   </widget>
+   <widget class="QMenu" name="menuLista_zakupow">
+    <property name="title">
+     <string>Lista zakupow</string>
+    </property>
+   </widget>
+   <addaction name="menuSk_adniki"/>
+   <addaction name="menuPrzepisy"/>
+   <addaction name="menuZasoby"/>
+   <addaction name="menuLista_zakupow"/>
+  </widget>
+  <widget class="QStatusBar" name="statusbar"/>
+  <action name="actionOption_3">
+   <property name="text">
+    <string>Opcja 3</string>
+   </property>
+  </action>
+  <action name="actionIngrAdd">
+   <property name="text">
+    <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionRecipesAdd">
+   <property name="text">
+    <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionResDodaj">
+   <property name="text">
+    <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionResUsun">
+   <property name="text">
+    <string>Usuń</string>
+   </property>
+  </action>
+  <action name="actionPrintResources">
+   <property name="text">
+    <string>Wyświetl</string>
+   </property>
+  </action>
+  <action name="actionPrintRecipes">
+   <property name="text">
+    <string>Wyświetl</string>
+   </property>
+  </action>
+  <action name="actionPrintIngr">
+   <property name="text">
+    <string>Wyświetl</string>
+   </property>
+  </action>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

@@ -7,6 +7,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
 #include <QMessageBox>
+#include "baseclass.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
@@ -34,6 +35,8 @@ class MainWindow : public QMainWindow
 
     CurrentlyViewedData currentlyViewedData;
     void SuggestButtonSwitchEnable();
+    void OpenWindow(BaseClass*);
+    void connectActionTriggered();
 
     //void ShowResources();
 
@@ -55,14 +58,6 @@ public:
 private slots:
     void on_logOutButton_clicked();
 
-    void on_actionIngrAdd_triggered();
-
-    void on_actionRecipesAdd_triggered();
-
-    void on_actionResDodaj_triggered();
-
-    void on_actionResUsun_triggered();
-
     void on_suggetButton_clicked();
 
     void on_tableView_activated(const QModelIndex &index);
@@ -72,8 +67,10 @@ private slots:
 private:
     Ui::MainWindow *ui;
 public slots:
-void resizeRowsInTableView();
-void ShowResources();
+    void resizeRowsInTableView();
+    void ShowResources();
+    void ShowIngredients();
+    void ShowRecipes();
 
 };
 #endif // MAINWINDOW_H

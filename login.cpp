@@ -27,6 +27,7 @@ Login::~Login()
         delete db;
         db = nullptr;
         QSqlDatabase::removeDatabase("qt_sql_default_connection");
+        qDebug() << "Baza danych odlaczona";
     }
     mw=nullptr;
     delete ui;
