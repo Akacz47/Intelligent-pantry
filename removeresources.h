@@ -10,7 +10,7 @@ namespace Ui {
 class RemoveResources;
 }
 
-class RemoveResources : public BaseClass
+class RemoveResources : public QDialog, public BaseClass
 {
     Q_OBJECT
 

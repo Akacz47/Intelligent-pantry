@@ -10,7 +10,7 @@ namespace Ui {
 class Resources;
 }
 
-class Resources : public BaseClass
+class Resources : public QDialog, public BaseClass
 {
     Q_OBJECT
     MainWindow* mainWindow;

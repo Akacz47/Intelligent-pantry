@@ -33,7 +33,17 @@
     </size>
    </property>
    <layout class="QGridLayout" name="gridLayout">
-    <item row="7" column="1">
+    <item row="4" column="1">
+     <widget class="QPushButton" name="deleteIngrButton">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="text">
+       <string>Usuń składniki składające się z tego przepisu</string>
+      </property>
+     </widget>
+    </item>
+    <item row="8" column="1">
      <widget class="QPushButton" name="suggetButton">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -46,7 +56,7 @@
       </property>
      </widget>
     </item>
-    <item row="8" column="1">
+    <item row="9" column="1">
      <widget class="QPushButton" name="logOutButton">
       <property name="sizePolicy">
        <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
@@ -98,12 +108,9 @@
      </widget>
     </item>
     <item row="3" column="1">
-     <widget class="QPushButton" name="deleteIngrButton">
-      <property name="enabled">
-       <bool>true</bool>
-      </property>
+     <widget class="QPushButton" name="addIngrToShoppingListButton">
       <property name="text">
-       <string>Usuń składniki składające się z tego przepisu</string>
+       <string>Dodaj skladniki do listy zakupow</string>
       </property>
      </widget>
     </item>
@@ -118,12 +125,6 @@
      <height>21</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuMenu">
-    <property name="title">
-     <string>Menu</string>
-    </property>
-    <addaction name="actionOption_3"/>
-   </widget>
    <widget class="QMenu" name="menuSk_adniki">
     <property name="title">
      <string>Składniki</string>
@@ -146,10 +147,17 @@
     <addaction name="actionResUsun"/>
     <addaction name="actionPrintResources"/>
    </widget>
-   <addaction name="menuMenu"/>
+   <widget class="QMenu" name="menuLista_zakupow">
+    <property name="title">
+     <string>Lista zakupow</string>
+    </property>
+    <addaction name="actionEraseShoppingList"/>
+    <addaction name="actionPrintShoppingList"/>
+   </widget>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
    <addaction name="menuZasoby"/>
+   <addaction name="menuLista_zakupow"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
@@ -190,6 +198,16 @@
   <action name="actionPrintIngr">
    <property name="text">
     <string>Wyświetl</string>
+   </property>
+  </action>
+  <action name="actionPrintShoppingList">
+   <property name="text">
+    <string>Wyświetl</string>
+   </property>
+  </action>
+  <action name="actionEraseShoppingList">
+   <property name="text">
+    <string>Usuń</string>
    </property>
   </action>
  </widget>

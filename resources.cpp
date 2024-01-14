@@ -2,12 +2,12 @@
 #include "ui_resources.h"
 
 Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
-    BaseClass(db, id, parent),
+    QDialog(parent),
+    BaseClass(db, id),
     ui(new Ui::Resources)
 {
     ui->setupUi(this);
     connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    ui->spinBox->value();
 
     mainWindow = qobject_cast<MainWindow*>(parent);
     if (mainWindow) {

@@ -5,7 +5,8 @@
 #include "resources.h"
 
 RemoveResources::RemoveResources(QSqlDatabase* db, int id, QWidget *parent) :
-    BaseClass(db, id, parent),
+    QDialog(parent),
+    BaseClass(db, id),
     ui(new Ui::RemoveResources),
     resourcesHelper(new Resources(db, id, this))
 {

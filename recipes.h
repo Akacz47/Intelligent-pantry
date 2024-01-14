@@ -9,7 +9,7 @@ namespace Ui {
 class Recipes;
 }
 
-class Recipes : public BaseClass
+class Recipes : public QDialog, public BaseClass
 {
     Q_OBJECT
 
@@ -18,11 +18,7 @@ class Recipes : public BaseClass
     bool WasOkClicled;
     void addRecipeToDataBase();
     int quantityOfIngredients;
-    bool doesRecipeExist(QString);
-    bool isQLineEditEmpty(QLineEdit*);
     bool checkQLineEdits();
-    int searchIngrId(QString);
-    int searchCraftId(QString);
     QString nameOfRecipe;
     QString buildQuery();
 

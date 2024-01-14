@@ -3,7 +3,8 @@
 #include <QtSql/QSqlError>
 
 Recipes::Recipes(QSqlDatabase* db, int id, QWidget *parent) :
-    BaseClass(db,id,parent),
+    QDialog(parent),
+    BaseClass(db,id),
     ui(new Ui::Recipes)
 {
     ui->setupUi(this);
@@ -111,26 +112,6 @@ void Recipes::addRecipeToDataBase()
     WasOkClicled = false;
 }
 
-bool Recipes::doesRecipeExist(QString name)
-{
-    QSqlQuery query;
-    query.prepare("SELECT name FROM crafting WHERE userId IN (0,?) AND name = ?");
-    query.addBindValue(id);
-    query.addBindValue(name);
-    query.exec();
-    if(query.next()){
-        return true;
-    }
-    return false;
-}
-
-bool Recipes::isQLineEditEmpty(QLineEdit* lineEdit)
-{
-    if(lineEdit->text()=="")
-        return true;
-    return false;
-}
-
 bool Recipes::checkQLineEdits()
 {
     bool blad = false;
@@ -163,36 +144,6 @@ bool Recipes::checkQLineEdits()
     }
     delete [] ingredients;
     return true;
-}
-
-int Recipes::searchIngrId(QString name)
-{
-    int craftId;
-    QSqlQuery query;
-    query.prepare("SELECT id FROM ingredients WHERE userId IN (0,?) AND name = ?");
-    query.addBindValue(id);
-    query.addBindValue(name);
-    query.exec();
-    if(query.next()){
-        craftId = query.value(0).toInt();
-        return craftId;
-    }
-    return -1;
-}
-
-int Recipes::searchCraftId(QString name)
-{
-    int craftId;
-    QSqlQuery query;
-    query.prepare("SELECT id FROM crafting WHERE userId IN (0,?) AND name = ?");
-    query.addBindValue(id);
-    query.addBindValue(name);
-    query.exec();
-    if(query.next()){
-        craftId = query.value(0).toInt();
-        return craftId;
-    }
-    return -1;
 }
 
 void Recipes::on_okButton_clicked()

@@ -2,12 +2,14 @@
 #define INGREDIENTS_H
 
 #include "baseclass.h"
+#include <QDialog>
+#include <QTimer>
 
 namespace Ui {
 class Ingredients;
 }
 
-class Ingredients : public BaseClass
+class Ingredients : public QDialog, public BaseClass
 {
     Q_OBJECT
 

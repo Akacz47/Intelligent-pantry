@@ -1,25 +1,25 @@
 #ifndef BASECLASS_H
 #define BASECLASS_H
 
-#include <QDialog>
 #include <QtSql/QSql>
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
-#include <QDialog>
-#include <QTimer>
 
-class BaseClass : public QDialog
+class BaseClass
 {
 protected:
     QSqlDatabase* db;
     int id;
-    QSqlQueryModel* model;
 
-    bool doesTheIngredientExist(QString name);
+    bool doesTheIngredientExist(QString);
+    bool doesRecipeExist(QString);
+    int searchIngrId(QString);
+    int searchCraftId(QString);
+    int searchResourceQuantity(QString);
 
 public:
-    BaseClass(QSqlDatabase* db, int id, QWidget *parent = nullptr);
+    BaseClass(QSqlDatabase* db, int id);
     ~BaseClass();
 
 };

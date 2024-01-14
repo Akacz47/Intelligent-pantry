@@ -3,7 +3,8 @@
 
 
 Ingredients::Ingredients(QSqlDatabase* db, int id, QWidget *parent) :
-    BaseClass(db,id,parent),
+    QDialog(parent),
+    BaseClass(db,id),
     ui(new Ui::Ingredients)
 {
     ui->setupUi(this);

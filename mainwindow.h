@@ -6,6 +6,7 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
+#include <QStandardItemModel>
 #include <QMessageBox>
 #include "baseclass.h"
 
@@ -13,46 +14,37 @@ QT_BEGIN_NAMESPACE
 namespace Ui { class MainWindow; }
 QT_END_NAMESPACE
 
-class MainWindow : public QMainWindow
+class MainWindow : public QMainWindow, public BaseClass
 {
     Q_OBJECT
 
-    QSqlDatabase* db;
     QDialog* loginWindow;
-    int id;
     QString login;
-    QSqlQueryModel *model;
     bool logOutClicked;
     QString suggestedRecipeToPrepare;
+    QSqlQueryModel* model;
+    QStandardItemModel* modelBezSql;
+    QMap<QString, int> ingredientsOfTheRecipeMap;
 
-    void SetTableView(const QString& str);
+    void SetTableView(QSqlQuery&);
     enum class CurrentlyViewedData{
         Craftings,
         Ingredients,
+        IngredientsOfTheRecipe,
+        IngredientsOfShoppingList,
         Resources,
         SuggestedCraftings
     };
 
     CurrentlyViewedData currentlyViewedData;
     void SuggestButtonSwitchEnable();
-    void OpenWindow(BaseClass*);
+    void OpenWindow(QDialog*);
     void connectActionTriggered();
-
-    //void ShowResources();
-
-protected:
-    void resizeEvent(QResizeEvent *event) override {
-        QMainWindow::resizeEvent(event);
-        resizeRowsInTableView();
-    }
-
+    void ShowIngredientsOfRecipe(QString);
 
 public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);
     ~MainWindow();
-
-    //void resizeRowsInTableView();
-    void setUserData(QString l, int id);
 
 
 private slots:
@@ -66,11 +58,17 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+
+protected:
+    void resizeEvent(QResizeEvent*) override;
+
 public slots:
-    void resizeRowsInTableView();
     void ShowResources();
     void ShowIngredients();
     void ShowRecipes();
+    void resizeRowsInTableView();
+    void AddIngredientsToTheShoppingList();
+    void ShowShoppingList();
 
 };
 #endif // MAINWINDOW_H
