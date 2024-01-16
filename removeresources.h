@@ -16,7 +16,7 @@ class RemoveResources : public QDialog, public BaseClass
 public:
     explicit RemoveResources(QSqlDatabase* db, int id, QWidget *parent = nullptr);
     ~RemoveResources();
-    void removeResource(int resourceId, int quantity);
+    void removeResource(int resourceId, int quantity, bool);
     void removeAllResource(int resourceId);
 public slots:
     void on_removeAllButton_clicked();

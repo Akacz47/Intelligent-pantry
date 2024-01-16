@@ -28,7 +28,7 @@ public slots:
     int getResourceId(QString resourceName, bool& isIngredient);
     int getIngredientId(QString ingredientName);
     int getRecipeId(QString recipeName);
-    int getResourceQuantity(int resourceId);
+    int getResourceQuantity(int resourceId,bool);
     bool checkResourceType(int,bool);
 };
 

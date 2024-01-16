@@ -87,11 +87,32 @@ int BaseClass::searchResourceQuantity(QString name)
     return 0;
 }
 
-int BaseClass::getResourceQuantity(int resourceId) {
+int BaseClass::getResourceQuantity(int resourceId, bool isIngredientFlag) {
+    int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
+
+    QSqlQuery checkQuery;
+    checkQuery.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
+    checkQuery.addBindValue(resourceId);
+    checkQuery.addBindValue(id);
+    checkQuery.addBindValue(ingrOrCraftBool);
+    checkQuery.exec();
+
+    int count = 0;
+    if (checkQuery.next()) {
+        count = checkQuery.value(0).toInt();
+    }
+
+    // Jeśli zasób nie istnieje, dodaj go
+    if (count == 0) { // Dodanie zasobu z domyślną ilością (np. 0)
+        return 0;
+    }
+
+    // Jeśli zasób istnieje, pobierz jego ilość
     QSqlQuery query;
-    query.prepare("SELECT quantity FROM resources WHERE ingrOrCraftId = ? AND userId = ?");
+    query.prepare("SELECT quantity FROM resources WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
     query.addBindValue(resourceId);
     query.addBindValue(id);
+    query.addBindValue(ingrOrCraftBool);
     query.exec();
 
     if (query.next()) {
@@ -142,19 +163,6 @@ bool BaseClass::isIngredient(QString resourceName) {
 
     if(query.next()) {
         return true;
-    }
-    return false;
-}
-
-bool BaseClass::checkResourceType(int resourceId, bool isIngredientFlag) {
-    QSqlQuery query;
-    query.prepare("SELECT ingrOrCraftBool FROM resources WHERE ingrOrCraftId = ? AND userId = ?");
-    query.addBindValue(resourceId);
-    query.addBindValue(id);
-    query.exec();
-
-    if (query.next()) {
-        return query.value(0).toBool() == isIngredientFlag;
     }
     return false;
 }

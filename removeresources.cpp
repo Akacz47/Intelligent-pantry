@@ -23,13 +23,13 @@ RemoveResources::~RemoveResources()
     delete ui;
 }
 
-void RemoveResources::removeResource(int resourceId, int quantityToRemove) {
+void RemoveResources::removeResource(int resourceId, int quantityToRemove, bool isIngredientFlag) {
     if (quantityToRemove <= 0) {
         QMessageBox::warning(this, "Błąd", "Ilość do usunięcia musi być większa od 0.");
         return;
     }
 
-    int currentQuantity = getResourceQuantity(resourceId);
+    int currentQuantity = getResourceQuantity(resourceId, isIngredientFlag);
     if (currentQuantity < quantityToRemove) {
         QMessageBox::warning(this, "Błąd", "Nie można usunąć więcej zasobów niż jest dostępne.");
         return;
@@ -103,6 +103,6 @@ void RemoveResources::on_okButton_clicked()
     }
 
     int quantityToRemove = ui->spinBox->value();
-    removeResource(resourceId, quantityToRemove);
+    removeResource(resourceId, quantityToRemove, isIngredientFlag);
 }
 

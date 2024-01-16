@@ -37,7 +37,14 @@ void Resources::updateResourceQuantity(int resourceId, int quantity) {
     }
 }
 
-void Resources::addNewResource(int resourceId, int quantity, bool isIngredient) {
+void Resources::addNewResource(QString resourceName, int quantity, bool isIngredient) {
+    int resourceId;
+    if (isIngredient) {
+        resourceId = getIngredientId(resourceName);
+    } else {
+        resourceId = getRecipeId(resourceName);
+    }
+
     if (resourceId < 0) {
         QMessageBox::warning(this, "Błąd", "Nieprawidłowy ID zasobu.");
         return;
@@ -71,17 +78,23 @@ QString resourceName = ui->resourcesNameLineEdit->text();
     }
 
     bool isIngredientFlag = false;
+    qDebug() << isIngredientFlag;
     int resourceId = getResourceId(resourceName, isIngredientFlag);
 
     if (resourceId == -1) {
         QMessageBox::critical(this, "Błąd", "Nie znaleziono zasobu w bazie danych.");
         return;
     }
+    qDebug() << isIngredientFlag;
+    int currentQuantity = getResourceQuantity(resourceId, isIngredientFlag);
 
-    int currentQuantity = searchResourceQuantity(resourceName);
-    if (currentQuantity > 0) {
-        updateResourceQuantity(resourceId, quantity);
-    } else {
-        addNewResource(resourceId, quantity, isIngredientFlag);
+    qDebug() << "OK";
+    if(currentQuantity> 0){
+        qDebug() << "SUP";
+            updateResourceQuantity(resourceId, quantity);
+    }
+    else{
+            qDebug() << "OK";
+        addNewResource(resourceName, quantity, isIngredientFlag);
     }
 }

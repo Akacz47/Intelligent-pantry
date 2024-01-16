@@ -21,7 +21,7 @@ public:
 private slots:
     void on_okButton_clicked();
     void updateResourceQuantity(int resourceId, int quantity);
-    void addNewResource(int resourceId, int quantity, bool isIngredient);
+    void addNewResource(QString, int quantity, bool isIngredient);
 signals:
     void resourcesUpdated();
 private:
