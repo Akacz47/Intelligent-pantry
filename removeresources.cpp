@@ -2,18 +2,13 @@
 #include "ui_removeresources.h"
 #include "baseclass.h"
 #include "mainwindow.h"
-#include "resources.h"
 
 RemoveResources::RemoveResources(QSqlDatabase* db, int id, QWidget *parent) :
     QDialog(parent),
     BaseClass(db, id),
-    ui(new Ui::RemoveResources),
-    resourcesHelper(new Resources(db, id, this))
+    ui(new Ui::RemoveResources)
 {
     ui->setupUi(this);
-    connect(ui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
-    connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    //connect(ui->removeAllButton, SIGNAL(clicked()), this, SLOT(on_removeAllButton_clicked()));
     ui->spinBox->value();
 
     MainWindow* mainWindow = qobject_cast<MainWindow*>(parent);
@@ -34,7 +29,7 @@ void RemoveResources::removeResource(int resourceId, int quantityToRemove) {
         return;
     }
 
-    int currentQuantity = resourcesHelper->getResourceQuantity(resourceId);
+    int currentQuantity = getResourceQuantity(resourceId);
     if (currentQuantity < quantityToRemove) {
         QMessageBox::warning(this, "Błąd", "Nie można usunąć więcej zasobów niż jest dostępne.");
         return;
@@ -68,7 +63,6 @@ void RemoveResources::removeAllResource(int resourceId) {
         QMessageBox::critical(this, "Błąd", "Nie udało się usunąć zasobu.");
     } else {
         QMessageBox::information(this, "Sukces", "Zasób został usunięty.");
-        //emit resourcesHelper->resourcesUpdated();
         emit resourcesUpdated();
     }
 }
@@ -82,7 +76,7 @@ void RemoveResources::on_removeAllButton_clicked()
         return;
     }
 
-    int resourceId = resourcesHelper->getResourceId(resourceName, isIngredientFlag);
+    int resourceId = getResourceId(resourceName, isIngredientFlag);
     if (resourceId < 0) {
         QMessageBox::warning(this, "Błąd", "Nie znaleziono zasobu w bazie danych.");
         return;
@@ -102,7 +96,7 @@ void RemoveResources::on_okButton_clicked()
         return;
     }
 
-    int resourceId = resourcesHelper->getResourceId(resourceName, isIngredientFlag);
+    int resourceId = getResourceId(resourceName, isIngredientFlag);
     if (resourceId < 0) {
         QMessageBox::warning(this, "Błąd", "Nie znaleziono zasobu w bazie danych.");
         return;

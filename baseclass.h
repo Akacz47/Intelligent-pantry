@@ -11,6 +11,7 @@ class BaseClass
 protected:
     QSqlDatabase* db;
     int id;
+    bool ingrOrRec;
 
     bool doesTheIngredientExist(QString);
     bool doesRecipeExist(QString);
@@ -21,7 +22,14 @@ protected:
 public:
     BaseClass(QSqlDatabase* db, int id);
     ~BaseClass();
-
+public slots:
+    bool isIngredient(QString resourceName);
+    bool isRecipe(QString resourceName);
+    int getResourceId(QString resourceName, bool& isIngredient);
+    int getIngredientId(QString ingredientName);
+    int getRecipeId(QString recipeName);
+    int getResourceQuantity(int resourceId);
+    bool checkResourceType(int,bool);
 };
 
 #endif // BASECLASS_H

@@ -86,3 +86,87 @@ int BaseClass::searchResourceQuantity(QString name)
     }
     return 0;
 }
+
+int BaseClass::getResourceQuantity(int resourceId) {
+    QSqlQuery query;
+    query.prepare("SELECT quantity FROM resources WHERE ingrOrCraftId = ? AND userId = ?");
+    query.addBindValue(resourceId);
+    query.addBindValue(id);
+    query.exec();
+
+    if (query.next()) {
+        return query.value(0).toInt();
+    }
+    return 0;
+}
+int BaseClass::getResourceId(QString resourceName, bool& isIngredientFlag) {
+    if (isIngredient(resourceName)) {
+        isIngredientFlag = true;
+        return getIngredientId(resourceName);
+    } else if (isRecipe(resourceName)) {
+        isIngredientFlag = false;
+        return getRecipeId(resourceName);
+    }
+    return -1;
+}
+
+int BaseClass::getIngredientId(QString ingredientName) {
+    QSqlQuery query;
+    query.prepare("SELECT id FROM ingredients WHERE name = ?");
+    query.addBindValue(ingredientName);
+    query.exec();
+
+    if(query.next()) {
+        return query.value(0).toInt();
+    }
+    return -1;
+}
+
+int BaseClass::getRecipeId(QString recipeName) {
+    QSqlQuery query;
+    query.prepare("SELECT id FROM crafting WHERE name = ?");
+    query.addBindValue(recipeName);
+    query.exec();
+
+    if(query.next()) {
+        return query.value(0).toInt();
+    }
+    return -1;
+}
+
+bool BaseClass::isIngredient(QString resourceName) {
+    QSqlQuery query;
+    query.prepare("SELECT id FROM ingredients WHERE name = ?");
+    query.addBindValue(resourceName);
+    query.exec();
+
+    if(query.next()) {
+        return true;
+    }
+    return false;
+}
+
+bool BaseClass::checkResourceType(int resourceId, bool isIngredientFlag) {
+    QSqlQuery query;
+    query.prepare("SELECT ingrOrCraftBool FROM resources WHERE ingrOrCraftId = ? AND userId = ?");
+    query.addBindValue(resourceId);
+    query.addBindValue(id);
+    query.exec();
+
+    if (query.next()) {
+        return query.value(0).toBool() == isIngredientFlag;
+    }
+    return false;
+}
+
+bool BaseClass::isRecipe(QString resourceName) {
+    QSqlQuery query;
+    query.prepare("SELECT id FROM crafting WHERE name = ?");
+    query.addBindValue(resourceName);
+    query.exec();
+
+    if(query.next()) {
+        return true;
+    }
+    return false;
+}

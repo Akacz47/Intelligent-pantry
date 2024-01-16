@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QMessageBox>
 #include "baseclass.h"
-#include "resources.h"
 
 namespace Ui {
 class RemoveResources;
@@ -24,7 +23,6 @@ public slots:
     void on_okButton_clicked();
 private:
     Ui::RemoveResources *ui;
-    Resources* resourcesHelper;
 signals:
     void resourcesUpdated();
 };

@@ -23,19 +23,6 @@ Resources::~Resources()
 }
 
 
-int Resources::getResourceQuantity(int resourceId) {
-    QSqlQuery query;
-    query.prepare("SELECT quantity FROM resources WHERE ingrOrCraftId = ? AND userId = ?");
-    query.addBindValue(resourceId);
-    query.addBindValue(id);
-    query.exec();
-
-    if (query.next()) {
-        return query.value(0).toInt();
-    }
-    return 0;
-}
-
 void Resources::updateResourceQuantity(int resourceId, int quantity) {
     QSqlQuery query;
     query.prepare("UPDATE resources SET quantity = quantity + ? WHERE ingrOrCraftId = ?");
@@ -49,72 +36,16 @@ void Resources::updateResourceQuantity(int resourceId, int quantity) {
         emit resourcesUpdated();
     }
 }
-bool Resources::isIngredient(QString resourceName) {
-    QSqlQuery query;
-    query.prepare("SELECT id FROM ingredients WHERE name = ?");
-    query.addBindValue(resourceName);
-    query.exec();
 
-    if(query.next()) {
-        return true;
-    }
-    return false;
-}
-
-bool Resources::isRecipe(QString resourceName) {
-    QSqlQuery query;
-    query.prepare("SELECT id FROM crafting WHERE name = ?");
-    query.addBindValue(resourceName);
-    query.exec();
-
-    if(query.next()) {
-        return true;
-    }
-    return false;
-}
-
-int Resources::getResourceId(QString resourceName, bool& isIngredientFlag) {
-    if (isIngredient(resourceName)) {
-        isIngredientFlag = true;
-        return getIngredientId(resourceName);
-    } else if (isRecipe(resourceName)) {
-        isIngredientFlag = false;
-        return getRecipeId(resourceName);
-    }
-    return -1;
-}
-
-int Resources::getIngredientId(QString ingredientName) {
-    QSqlQuery query;
-    query.prepare("SELECT id FROM ingredients WHERE name = ?");
-    query.addBindValue(ingredientName);
-    query.exec();
-
-    if(query.next()) {
-        return query.value(0).toInt();
-    }
-    return -1;
-}
-
-int Resources::getRecipeId(QString recipeName) {
-    QSqlQuery query;
-    query.prepare("SELECT id FROM crafting WHERE name = ?");
-    query.addBindValue(recipeName);
-    query.exec();
-
-    if(query.next()) {
-        return query.value(0).toInt();
-    }
-    return -1;
-}
 void Resources::addNewResource(int resourceId, int quantity, bool isIngredient) {
     if (resourceId < 0) {
         QMessageBox::warning(this, "Błąd", "Nieprawidłowy ID zasobu.");
         return;
     }
-
+    qDebug() << isIngredient;
     int ingrOrCraftBool = isIngredient ? 0 : 1;
 
+    qDebug() << ingrOrCraftBool;
     QSqlQuery query;
     query.prepare("INSERT INTO resources (quantity, userId, ingrOrCraftId, ingrOrCraftBool) VALUES (?, ?, ?, ?)");
     query.addBindValue(quantity);
@@ -147,7 +78,7 @@ QString resourceName = ui->resourcesNameLineEdit->text();
         return;
     }
 
-    int currentQuantity = getResourceQuantity(resourceId);
+    int currentQuantity = searchResourceQuantity(resourceName);
     if (currentQuantity > 0) {
         updateResourceQuantity(resourceId, quantity);
     } else {
