@@ -52,7 +52,6 @@ void Resources::addNewResource(QString resourceName, int quantity, bool isIngred
     qDebug() << isIngredient;
     int ingrOrCraftBool = isIngredient ? 0 : 1;
 
-    qDebug() << ingrOrCraftBool;
     QSqlQuery query;
     query.prepare("INSERT INTO resources (quantity, userId, ingrOrCraftId, ingrOrCraftBool) VALUES (?, ?, ?, ?)");
     query.addBindValue(quantity);
@@ -78,7 +77,6 @@ QString resourceName = ui->resourcesNameLineEdit->text();
     }
 
     bool isIngredientFlag = false;
-    qDebug() << isIngredientFlag;
     int resourceId = getResourceId(resourceName, isIngredientFlag);
 
     if (resourceId == -1) {
@@ -88,13 +86,10 @@ QString resourceName = ui->resourcesNameLineEdit->text();
     qDebug() << isIngredientFlag;
     int currentQuantity = getResourceQuantity(resourceId, isIngredientFlag);
 
-    qDebug() << "OK";
     if(currentQuantity> 0){
-        qDebug() << "SUP";
             updateResourceQuantity(resourceId, quantity);
     }
     else{
-            qDebug() << "OK";
         addNewResource(resourceName, quantity, isIngredientFlag);
     }
 }
