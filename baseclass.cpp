@@ -102,12 +102,10 @@ int BaseClass::getResourceQuantity(int resourceId, bool isIngredientFlag) {
         count = checkQuery.value(0).toInt();
     }
 
-    // Jeśli zasób nie istnieje, dodaj go
-    if (count == 0) { // Dodanie zasobu z domyślną ilością (np. 0)
+    if (count == 0) {
         return 0;
     }
 
-    // Jeśli zasób istnieje, pobierz jego ilość
     QSqlQuery query;
     query.prepare("SELECT quantity FROM resources WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
     query.addBindValue(resourceId);

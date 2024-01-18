@@ -23,11 +23,19 @@ Resources::~Resources()
 }
 
 
-void Resources::updateResourceQuantity(int resourceId, int quantity) {
+void Resources::updateResourceQuantity(int resourceId, int quantity, bool isIngredientFlag, QString resourceName) {
+    bool isMatchingType = (isIngredientFlag && isIngredient(resourceName)) || (!isIngredientFlag && isRecipe(resourceName));
+    if (!isMatchingType) {
+        QMessageBox::critical(this, "Błąd", "Niepoprawny typ zasobu.");
+        return;
+    }
+
+    int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
     QSqlQuery query;
-    query.prepare("UPDATE resources SET quantity = quantity + ? WHERE ingrOrCraftId = ?");
+    query.prepare("UPDATE resources SET quantity = quantity + ? WHERE ingrOrCraftId = ? AND ingrOrCraftBool = ?");
     query.addBindValue(quantity);
     query.addBindValue(resourceId);
+    query.addBindValue(ingrOrCraftBool);
 
     if (!query.exec()) {
         QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować ilości zasobu.");
@@ -77,17 +85,23 @@ QString resourceName = ui->resourcesNameLineEdit->text();
 
     bool isIngredientFlag = false;
     int resourceId = getResourceId(resourceName, isIngredientFlag);
-
     if (resourceId == -1) {
         QMessageBox::critical(this, "Błąd", "Nie znaleziono zasobu w bazie danych.");
         return;
     }
+
+    // Sprawdzenie, czy typ zasobu pasuje do podanej nazwy
+    bool isMatchingType = (isIngredientFlag && isIngredient(resourceName)) || (!isIngredientFlag && isRecipe(resourceName));
+    if (!isMatchingType) {
+        QMessageBox::critical(this, "Błąd", "Niepoprawny typ zasobu.");
+        return;
+    }
+
     int currentQuantity = getResourceQuantity(resourceId, isIngredientFlag);
 
-    if(currentQuantity> 0){
-            updateResourceQuantity(resourceId, quantity);
-    }
-    else{
+    if (currentQuantity > 0) {
+        updateResourceQuantity(resourceId, quantity, isIngredientFlag, resourceName);
+    } else {
         addNewResource(resourceName, quantity, isIngredientFlag);
     }
 }

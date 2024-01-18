@@ -20,7 +20,7 @@ public:
     ~Resources();
 private slots:
     void on_okButton_clicked();
-    void updateResourceQuantity(int resourceId, int quantity);
+    void updateResourceQuantity(int resourceId, int quantity, bool isIngredientFlag, QString resourceName);
     void addNewResource(QString, int quantity, bool isIngredient);
 signals:
     void resourcesUpdated();
