@@ -18,7 +18,8 @@ SOURCES += \
     qaesencryption.cpp \
     recipes.cpp \
     removeresources.cpp \
-    resources.cpp
+    resources.cpp \
+    shoppinglist.cpp
 
 HEADERS += \
     baseclass.h \
@@ -28,7 +29,8 @@ HEADERS += \
     qaesencryption.h \
     recipes.h \
     removeresources.h \
-    resources.h
+    resources.h \
+    shoppinglist.h
 
 FORMS += \
     ingredients.ui \
@@ -36,7 +38,8 @@ FORMS += \
     mainwindow.ui \
     recipes.ui \
     removeresources.ui \
-    resources.ui
+    resources.ui \
+    shoppinglist.ui
 
 # Default rules for deployment.
 #qnx: target.path = /tmp/$${TARGET}/bin
