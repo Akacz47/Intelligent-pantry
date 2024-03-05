@@ -130,6 +130,7 @@
      <string>Składniki</string>
     </property>
     <addaction name="actionIngrAdd"/>
+    <addaction name="actionIngrUsun"/>
     <addaction name="actionPrintIngr"/>
    </widget>
    <widget class="QMenu" name="menuPrzepisy">
@@ -137,6 +138,7 @@
      <string>Przepisy</string>
     </property>
     <addaction name="actionRecipesAdd"/>
+    <addaction name="actionRecUsun"/>
     <addaction name="actionPrintRecipes"/>
    </widget>
    <widget class="QMenu" name="menuZasoby">
@@ -232,6 +234,16 @@
   <action name="actionReadFromFile">
    <property name="text">
     <string>Wczytaj z pliku</string>
+   </property>
+  </action>
+  <action name="actionRecUsun">
+   <property name="text">
+    <string>Usuń</string>
+   </property>
+  </action>
+  <action name="actionIngrUsun">
+   <property name="text">
+    <string>Usuń</string>
    </property>
   </action>
  </widget>

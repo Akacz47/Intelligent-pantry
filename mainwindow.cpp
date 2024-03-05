@@ -4,6 +4,8 @@
 #include "recipes.h"
 #include "resources.h"
 #include "removeresources.h"
+#include "removerecipes.h"
+#include "removeingredients.h"
 #include "shoppinglist.h"
 
 
@@ -59,7 +61,9 @@ void MainWindow::SuggestButtonSwitchEnable()
 void MainWindow::connectActionTriggered()
 {
     connect(ui->actionIngrAdd,&QAction::triggered, this,[=]() { Ingredients ingr(db,id,this); OpenWindow(&ingr); });
+    connect(ui->actionIngrUsun,&QAction::triggered, this,[=]() { RemoveIngredients removeingredients(db,id,this); OpenWindow(&removeingredients); });
     connect(ui->actionRecipesAdd,&QAction::triggered, this,[=]() { Recipes recipes(db,id,this); OpenWindow(&recipes); });
+    connect(ui->actionRecUsun,&QAction::triggered, this,[=]() { RemoveRecipes removerecipes(db,id,this); OpenWindow(&removerecipes); });
     connect(ui->actionResDodaj,&QAction::triggered, this,[=]() { Resources resources(db,id,this); OpenWindow(&resources); });
     connect(ui->actionResUsun,&QAction::triggered, this,[=]() { RemoveResources removeResources(db,id,this); OpenWindow(&removeResources); });
     connect(ui->actionPrintIngr,&QAction::triggered, this, &MainWindow::ShowIngredients);

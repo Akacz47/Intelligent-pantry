@@ -1,4 +1,5 @@
 #include "baseclass.h"
+#include "qsqlerror.h"
 
 BaseClass::BaseClass(QSqlDatabase* db, int id)
 {
@@ -175,4 +176,106 @@ bool BaseClass::isRecipe(QString resourceName) {
         return true;
     }
     return false;
+}
+
+
+bool BaseClass::deleteRecipe(int recipeId) {
+    if(isRecipeUsedInResources(recipeId)) {
+        qDebug() << "Attempt to delete a recipe that is used in resources.";
+        return false;
+    }
+
+    QSqlQuery queryCheck(*db);
+    queryCheck.prepare("SELECT userId FROM crafting WHERE id = ?");
+    queryCheck.addBindValue(recipeId);
+    if(queryCheck.exec() && queryCheck.next()) {
+        int ownerUserId = queryCheck.value(0).toInt();
+
+        if(ownerUserId != id) {
+            qDebug() << "Attempt to delete a recipe that does not belong to the user or is predefined.";
+            return false;
+        }
+    } else {
+        qDebug() << "Recipe does not exist.";
+        return false;
+    }
+
+    db->transaction();
+    QSqlQuery query(*db);
+
+    query.prepare("DELETE FROM crafting_ingredients WHERE craftingId = ?");
+    query.addBindValue(recipeId);
+    if(!query.exec()) {
+        qDebug() << "Error deleting recipe ingredients:" << query.lastError();
+        db->rollback();
+        return false;
+    }
+
+    query.prepare("DELETE FROM crafting WHERE id = ? AND userId = ?");
+    query.addBindValue(recipeId);
+    query.addBindValue(id);
+    if(!query.exec()) {
+        qDebug() << "Delete recipe error:" << query.lastError();
+        db->rollback();
+        return false;
+    }
+
+    db->commit();
+    return true;
+}
+bool BaseClass::isRecipeUsedInResources(int recipeId) {
+    QSqlQuery query(*db);
+    query.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND ingrOrCraftBool = 1");
+    query.addBindValue(recipeId);
+    if(query.exec() && query.next()) {
+        int count = query.value(0).toInt();
+        return count > 0;
+    }
+    return false;
+}
+
+bool BaseClass::isIngredientUsedInRecipes(int ingredientId) {
+    QSqlQuery query(*db);
+    query.prepare("SELECT COUNT(*) FROM crafting_ingredients WHERE ingredientId = ?");
+    query.addBindValue(ingredientId);
+    if(query.exec() && query.next()) {
+        return query.value(0).toInt() > 0;
+    }
+    return false;
+}
+bool BaseClass::isIngredientUsedInResources(int ingredientId) {
+    QSqlQuery query(*db);
+    query.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND ingrOrCraftBool = 0");
+    query.addBindValue(ingredientId);
+    if(query.exec() && query.next()) {
+        return query.value(0).toInt() > 0;
+    }
+    return false;
+}
+
+bool BaseClass::deleteIngredient(int ingredientId) {
+    if(isIngredientUsedInRecipes(ingredientId) || isIngredientUsedInResources(ingredientId)) {
+        qDebug() << "Attempt to delete an ingredient that is used.";
+        return false;
+    }
+
+    QSqlQuery query(*db);
+    query.prepare("DELETE FROM ingredients WHERE id = ? AND userId = ?");
+    query.addBindValue(ingredientId);
+    query.addBindValue(id);
+    if(!query.exec()) {
+        qDebug() << "Delete ingredient error:" << query.lastError();
+        return false;
+    }
+    return true;
+}
+
+int BaseClass::getIngredientOwnerId(int ingredientId) {
+    QSqlQuery query(*db);
+    query.prepare("SELECT userId FROM ingredients WHERE id = ?");
+    query.addBindValue(ingredientId);
+    if(query.exec() && query.next()) {
+        return query.value(0).toInt();
+    }
+    return -1;
 }
