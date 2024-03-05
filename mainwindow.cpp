@@ -4,6 +4,8 @@
 #include "recipes.h"
 #include "resources.h"
 #include "removeresources.h"
+#include "shoppinglist.h"
+
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     QMainWindow(parent),
@@ -46,7 +48,6 @@ void MainWindow::SuggestButtonSwitchEnable()
     else if(currentlyViewedData == CurrentlyViewedData::IngredientsOfTheRecipe) {
         ui->addIngrToShoppingListButton->show();
         ui->deleteIngrButton->hide();
-        suggestedRecipeToPrepare = "";
     }
     else {
         ui->addIngrToShoppingListButton->hide();
@@ -67,7 +68,15 @@ void MainWindow::connectActionTriggered()
     connect(ui->addIngrToShoppingListButton,&QPushButton::clicked, this, &MainWindow::AddIngredientsToTheShoppingList);
     connect(ui->actionPrintShoppingList,&QAction::triggered, this, &MainWindow::ShowShoppingList);
     connect(ui->actionEraseShoppingList,&QAction::triggered,this, [=]() { ingredientsOfTheRecipeMap.clear();
+    namesOfAddedRecipesToShoppingListMap.clear();
+    ingredientsManuallyAddedMap.clear();
     QMessageBox::information(this, "Informacja", "Wyczyszczono listę zakupów"); });
+    connect(ui->actionPrintAddedRecipesToShoppingList,&QAction::triggered,this,&MainWindow::showRecipesOfTheShoppingList);
+    connect(ui->actionAddIngredient,&QAction::triggered,this,[=]() { ShoppingList shoppingList(db,id,ingredientsManuallyAddedMap,this);
+    connect(&shoppingList, &ShoppingList::mapEmitted, this, &MainWindow::receiveMap);
+    OpenWindow(&shoppingList);});
+    connect(ui->actionSaveToFile,&QAction::triggered, this, &MainWindow::saveToFile);
+    connect(ui->actionReadFromFile,&QAction::triggered, this, &MainWindow::readFromFile);
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)
@@ -95,12 +104,106 @@ void MainWindow::AddIngredientsToTheShoppingList()
 
         QModelIndex quantityIndex = model->index(i,1);
         int quantity = model->data(quantityIndex).toInt();
-        if (ingredientsOfTheRecipeMap.find(ingredient) != ingredientsOfTheRecipeMap.end())
-            ingredientsOfTheRecipeMap[ingredient] += quantity;
+
+        if (!ingredientsOfTheRecipeMap.contains(ingredient))
+            ingredientsOfTheRecipeMap.insert(ingredient,quantity);
         else
-            ingredientsOfTheRecipeMap[ingredient] = quantity;
+            ingredientsOfTheRecipeMap[ingredient] += quantity;
     }
-    QMessageBox::information(this, "Informacja", "Dodano skladniki do listy zakupów");
+
+    if (namesOfAddedRecipesToShoppingListMap.find(suggestedRecipeToPrepare) != namesOfAddedRecipesToShoppingListMap.end())
+        namesOfAddedRecipesToShoppingListMap[suggestedRecipeToPrepare] += 1;
+    else
+        namesOfAddedRecipesToShoppingListMap[suggestedRecipeToPrepare] = 1;
+    qDebug() << suggestedRecipeToPrepare;
+    QMessageBox::information(this, "Informacja", "Dodano przepis do listy zakupów");
+}
+
+void MainWindow::showRecipesOfTheShoppingList(){
+    modelBezSql->clear();
+    modelBezSql->setColumnCount(2);
+    modelBezSql->setHeaderData(0, Qt::Horizontal, "Nazwa");
+    modelBezSql->setHeaderData(1, Qt::Horizontal, "Ilość");
+    int row = 0;
+    for (auto it = namesOfAddedRecipesToShoppingListMap.cbegin(); it != namesOfAddedRecipesToShoppingListMap.cend(); ++it) {
+        modelBezSql->setItem(row, 0, new QStandardItem(it.key()));
+        modelBezSql->setItem(row, 1, new QStandardItem(QString::number(it.value())));
+
+        // Blokowanie edycji wszystkich komórek
+        modelBezSql->item(row,0)->setEditable(false);
+        modelBezSql->item(row,1)->setEditable(false);
+
+        ++row;
+    }
+    ui->tableView->setModel(modelBezSql);
+    currentlyViewedData = CurrentlyViewedData::RecipesOfTheShoppingList;
+    SuggestButtonSwitchEnable();
+    resizeRowsInTableView();
+}
+
+void MainWindow::saveToFile()
+{
+    QString filePath = QFileDialog::getSaveFileName(this, "Zapisz plik", "", "Pliki tekstowe (*.txt)");
+    if (filePath.isEmpty()) return; // Anulowano dialog
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::WriteOnly | QIODevice::Text)) {
+        qDebug() << "Nie można otworzyć pliku do zapisu:" << filePath;
+        return;
+    }
+
+    QTextStream out(&file);
+    for (auto it = ingredientsOfTheRecipeMap.begin(); it != ingredientsOfTheRecipeMap.end(); ++it) {
+        out << it.key() << ':';
+        out << it.value() << '\n';
+    }
+    out << ";\n";
+    for (auto it = namesOfAddedRecipesToShoppingListMap.begin(); it != namesOfAddedRecipesToShoppingListMap.end(); ++it) {
+        out << it.key() << ':';
+        out << it.value() << '\n';
+    }
+    out << ";\n";
+    for (auto it = ingredientsManuallyAddedMap.begin(); it != ingredientsManuallyAddedMap.end(); ++it) {
+        out << it.key() << ':';
+        out << it.value() << '\n';
+    }
+    file.close();
+}
+
+void MainWindow::readFromFile()
+{
+    QString filePath = QFileDialog::getOpenFileName(this, "Otwórz plik", "", "Pliki tekstowe (*.txt)");
+    if (filePath.isEmpty()) return; // Anulowano dialog
+
+    QFile file(filePath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        qDebug() << "Nie można otworzyć pliku do odczytu:" << filePath;
+        return;
+    }
+
+    QTextStream in(&file);
+    int whichMapToRead = 1;
+    ingredientsOfTheRecipeMap.clear();
+    namesOfAddedRecipesToShoppingListMap.clear();
+    ingredientsManuallyAddedMap.clear();
+    while (!in.atEnd()) {
+        QString line = in.readLine();
+        if (line==";")
+            whichMapToRead++;
+        else {
+            QStringList parts = line.split(':');
+            if (parts.size() == 2) {
+                QString key = parts.at(0);
+                int value = parts.at(1).toInt();
+                switch(whichMapToRead) {
+                case 1: ingredientsOfTheRecipeMap.insert(key, value); break;
+                case 2: namesOfAddedRecipesToShoppingListMap.insert(key, value); break;
+                case 3: ingredientsManuallyAddedMap.insert(key, value); break;
+                }
+            }
+        }
+    }
+    file.close();
 }
 
 void MainWindow::ShowShoppingList()
@@ -110,6 +213,7 @@ void MainWindow::ShowShoppingList()
     modelBezSql->setHeaderData(0, Qt::Horizontal, "Nazwa");
     modelBezSql->setHeaderData(1, Qt::Horizontal, "Ilość");
     int row = 0;
+
     for (auto it = ingredientsOfTheRecipeMap.cbegin(); it != ingredientsOfTheRecipeMap.cend(); ++it) {
         int quantityInResources = searchResourceQuantity(it.key());
 
@@ -119,20 +223,33 @@ void MainWindow::ShowShoppingList()
         if (quantityToPrint > 0 ){
             modelBezSql->setItem(row, 0, new QStandardItem(it.key()));
             modelBezSql->setItem(row, 1, new QStandardItem(QString::number(quantityToPrint)));
+
+            // Blokowanie edycji wszystkich komórek
+            modelBezSql->item(row,0)->setEditable(false);
+            modelBezSql->item(row,1)->setEditable(false);
+
             ++row;
         }
     }
 
-    // Blokowanie edycji wszystkich komórek
-    for (int row = 0; row < modelBezSql->rowCount(); ++row) {
-        for (int col = 0; col < modelBezSql->columnCount(); ++col) {
-            modelBezSql->item(row, col)->setEditable(false);
-        }
+    for (auto it = ingredientsManuallyAddedMap.cbegin(); it != ingredientsManuallyAddedMap.cend(); ++it) {
+        QStandardItem *ingredient = new QStandardItem(it.key());
+        ingredient->setEditable(false);
+        ingredient->setData(QColor(Qt::green).lighter(75),Qt::ForegroundRole);
+        QStandardItem *quantity = new QStandardItem(QString::number(it.value()));
+        quantity->setEditable(false);
+        quantity->setData(QColor(Qt::green).lighter(75),Qt::ForegroundRole);
+
+        modelBezSql->setItem(row, 0, ingredient);
+        modelBezSql->setItem(row, 1, quantity);
+
+        ++row;
     }
 
     ui->tableView->setModel(modelBezSql);
     currentlyViewedData = CurrentlyViewedData::IngredientsOfShoppingList;
     SuggestButtonSwitchEnable();
+    resizeRowsInTableView();
 }
 
 void MainWindow::OpenWindow(QDialog* reference)
@@ -267,11 +384,11 @@ void MainWindow::on_tableView_activated(const QModelIndex &index)
     }
 }
 
-
 void MainWindow::on_deleteIngrButton_clicked()
 {
     if(suggestedRecipeToPrepare != ""){
 
     }
 }
+
 

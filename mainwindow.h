@@ -8,6 +8,11 @@
 #include <QtSql/QSqlQueryModel>
 #include <QStandardItemModel>
 #include <QMessageBox>
+
+#include <QFileDialog>
+#include <QFile>
+#include <QTextStream>
+
 #include "baseclass.h"
 
 QT_BEGIN_NAMESPACE
@@ -25,6 +30,8 @@ class MainWindow : public QMainWindow, public BaseClass
     QSqlQueryModel* model;
     QStandardItemModel* modelBezSql;
     QMap<QString, int> ingredientsOfTheRecipeMap;
+    QMap<QString, int> namesOfAddedRecipesToShoppingListMap;
+    QMap<QString, int> ingredientsManuallyAddedMap;
 
     void SetTableView(QSqlQuery&);
     enum class CurrentlyViewedData{
@@ -33,7 +40,8 @@ class MainWindow : public QMainWindow, public BaseClass
         IngredientsOfTheRecipe,
         IngredientsOfShoppingList,
         Resources,
-        SuggestedCraftings
+        SuggestedCraftings,
+        RecipesOfTheShoppingList
     };
 
     CurrentlyViewedData currentlyViewedData;
@@ -41,6 +49,10 @@ class MainWindow : public QMainWindow, public BaseClass
     void OpenWindow(QDialog*);
     void connectActionTriggered();
     void ShowIngredientsOfRecipe(QString);
+    void showRecipesOfTheShoppingList();
+
+    void saveToFile();
+    void readFromFile();
 
 public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);
@@ -69,6 +81,9 @@ public slots:
     void resizeRowsInTableView();
     void AddIngredientsToTheShoppingList();
     void ShowShoppingList();
+    void receiveMap(const QMap<QString, int> &map) {
+        ingredientsManuallyAddedMap = map;
+    }
 
 };
 #endif // MAINWINDOW_H

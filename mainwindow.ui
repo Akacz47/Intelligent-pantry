@@ -153,6 +153,10 @@
     </property>
     <addaction name="actionEraseShoppingList"/>
     <addaction name="actionPrintShoppingList"/>
+    <addaction name="actionPrintAddedRecipesToShoppingList"/>
+    <addaction name="actionAddIngredient"/>
+    <addaction name="actionSaveToFile"/>
+    <addaction name="actionReadFromFile"/>
    </widget>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
@@ -202,12 +206,32 @@
   </action>
   <action name="actionPrintShoppingList">
    <property name="text">
-    <string>Wyświetl</string>
+    <string>Wyświetl składniki do kupienia</string>
    </property>
   </action>
   <action name="actionEraseShoppingList">
    <property name="text">
     <string>Usuń</string>
+   </property>
+  </action>
+  <action name="actionPrintAddedRecipesToShoppingList">
+   <property name="text">
+    <string>Wyświetl dodane przepisy</string>
+   </property>
+  </action>
+  <action name="actionAddIngredient">
+   <property name="text">
+    <string>Dodaj składnik</string>
+   </property>
+  </action>
+  <action name="actionSaveToFile">
+   <property name="text">
+    <string>Zapisz do pliku</string>
+   </property>
+  </action>
+  <action name="actionReadFromFile">
+   <property name="text">
+    <string>Wczytaj z pliku</string>
    </property>
   </action>
  </widget>
