@@ -35,6 +35,8 @@ public slots:
     int getResourceQuantity(int resourceId,bool);
     bool checkResourceType(int,bool);
     int getIngredientOwnerId(int ingredientId);
+    bool updateResourceQuantity(int resourceId, int quantityChange, bool isIngredient);
+
 };
 
 #endif // BASECLASS_H

@@ -81,6 +81,9 @@ void MainWindow::connectActionTriggered()
     OpenWindow(&shoppingList);});
     connect(ui->actionSaveToFile,&QAction::triggered, this, &MainWindow::saveToFile);
     connect(ui->actionReadFromFile,&QAction::triggered, this, &MainWindow::readFromFile);
+    connect(ui->tableView, &QTableView::clicked, this, [this](const QModelIndex &index) {
+        suggestedRecipeToPrepare = index.model()->data(index, Qt::DisplayRole).toString();
+    });
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)
@@ -390,9 +393,49 @@ void MainWindow::on_tableView_activated(const QModelIndex &index)
 
 void MainWindow::on_deleteIngrButton_clicked()
 {
-    if(suggestedRecipeToPrepare != ""){
+    if(!suggestedRecipeToPrepare.isEmpty()) {
+        int recipeId = searchCraftId(suggestedRecipeToPrepare);
+        if(recipeId == -1) {
+            QMessageBox::warning(this, "Błąd", "Nie można znaleźć przepisu.");
+            return;
+        }
 
+        QSqlQuery queryIngredients(*db);
+        queryIngredients.prepare("SELECT ingredientId, quantity FROM crafting_ingredients WHERE craftingId = ?");
+        queryIngredients.addBindValue(recipeId);
+
+        if(!queryIngredients.exec()) {
+            QMessageBox::critical(this, "Błąd", "Błąd podczas szukania składników przepisu.");
+            return;
+        }
+
+        db->transaction();
+        bool errorOccurred = false;
+
+        while(queryIngredients.next()) {
+            int ingredientId = queryIngredients.value(0).toInt();
+            int quantityToRemove = queryIngredients.value(1).toInt();
+
+            int currentQuantity = getResourceQuantity(ingredientId, true);
+            if(currentQuantity > 0) {
+                if(!updateResourceQuantity(ingredientId, -quantityToRemove, true)) {
+                    errorOccurred = true;
+                    QMessageBox::warning(this, "Błąd", "Nie udało się usunąć składnika o ID " + QString::number(ingredientId) + " z zasobów.");
+                    break;
+                }
+            }
+        }
+
+        if(errorOccurred) {
+            db->rollback();
+            QMessageBox::critical(this, "Błąd", "Wystąpił problem podczas usuwania składników z zasobów.");
+        } else {
+            db->commit();
+            QMessageBox::information(this, "Sukces", "Składniki przepisu zostały usunięte z zasobów.");
+        }
     }
+    resizeRowsInTableView();
+    ShowResources();
 }
 
 

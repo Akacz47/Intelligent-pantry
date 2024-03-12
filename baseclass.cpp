@@ -279,3 +279,31 @@ int BaseClass::getIngredientOwnerId(int ingredientId) {
     }
     return -1;
 }
+
+bool BaseClass::updateResourceQuantity(int resourceId, int quantityChange, bool isIngredient) {
+    int ingrOrCraftBool = isIngredient ? 0 : 1;
+    QSqlQuery query(*db);
+
+    int currentQuantity = getResourceQuantity(resourceId, isIngredient);
+    int newQuantity = currentQuantity + quantityChange;
+
+    if (newQuantity <= 0) {
+        query.prepare("DELETE FROM resources WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
+        query.addBindValue(resourceId);
+        query.addBindValue(id);
+        query.addBindValue(ingrOrCraftBool);
+    } else {
+        query.prepare("UPDATE resources SET quantity = ? WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
+        query.addBindValue(newQuantity);
+        query.addBindValue(resourceId);
+        query.addBindValue(id);
+        query.addBindValue(ingrOrCraftBool);
+    }
+
+    if (!query.exec()) {
+        qDebug() << "Error updating resource quantity:" << query.lastError();
+        return false;
+    }
+
+    return true;
+}

@@ -10,6 +10,7 @@ RemoveRecipes::RemoveRecipes(QSqlDatabase* db, int id, QWidget *parent) :
     connect(ui->cancelButton, &QPushButton::clicked, this, &RemoveRecipes::reject);
 }
 
+
 RemoveRecipes::~RemoveRecipes()
 {
     delete ui;
