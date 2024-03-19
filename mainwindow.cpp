@@ -4,6 +4,8 @@
 #include "recipes.h"
 #include "resources.h"
 #include "removeresources.h"
+#include "removerecipes.h"
+#include "removeingredients.h"
 #include "shoppinglist.h"
 #include "kcal.h"
 
@@ -60,7 +62,9 @@ void MainWindow::SuggestButtonSwitchEnable()
 void MainWindow::connectActionTriggered()
 {
     connect(ui->actionIngrAdd,&QAction::triggered, this,[=]() { Ingredients ingr(db,id,this); OpenWindow(&ingr); });
+    connect(ui->actionIngrUsun,&QAction::triggered, this,[=]() { RemoveIngredients removeingredients(db,id,this); OpenWindow(&removeingredients); });
     connect(ui->actionRecipesAdd,&QAction::triggered, this,[=]() { Recipes recipes(db,id,this); OpenWindow(&recipes); });
+    connect(ui->actionRecUsun,&QAction::triggered, this,[=]() { RemoveRecipes removerecipes(db,id,this); OpenWindow(&removerecipes); });
     connect(ui->actionResDodaj,&QAction::triggered, this,[=]() { Resources resources(db,id,this); OpenWindow(&resources); });
     connect(ui->actionResUsun,&QAction::triggered, this,[=]() { RemoveResources removeResources(db,id,this); OpenWindow(&removeResources); });
     connect(ui->actionChangeDailyMaxKcal,&QAction::triggered, this,[=]() { Kcal kcal(db,id,maxKcal,this);
@@ -81,6 +85,9 @@ void MainWindow::connectActionTriggered()
     OpenWindow(&shoppingList);});
     connect(ui->actionSaveToFile,&QAction::triggered, this, &MainWindow::saveToFile);
     connect(ui->actionReadFromFile,&QAction::triggered, this, &MainWindow::readFromFile);
+    connect(ui->tableView, &QTableView::clicked, this, [this](const QModelIndex &index) {
+        suggestedRecipeToPrepare = index.model()->data(index, Qt::DisplayRole).toString();
+    });
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)
@@ -440,9 +447,49 @@ void MainWindow::on_tableView_activated(const QModelIndex &index)
 
 void MainWindow::on_deleteIngrButton_clicked()
 {
-    if(suggestedRecipeToPrepare != ""){
+    if(!suggestedRecipeToPrepare.isEmpty()) {
+        int recipeId = searchCraftId(suggestedRecipeToPrepare);
+        if(recipeId == -1) {
+            QMessageBox::warning(this, "Błąd", "Nie można znaleźć przepisu.");
+            return;
+        }
 
+        QSqlQuery queryIngredients(*db);
+        queryIngredients.prepare("SELECT ingredientId, quantity FROM crafting_ingredients WHERE craftingId = ?");
+        queryIngredients.addBindValue(recipeId);
+
+        if(!queryIngredients.exec()) {
+            QMessageBox::critical(this, "Błąd", "Błąd podczas szukania składników przepisu.");
+            return;
+        }
+
+        db->transaction();
+        bool errorOccurred = false;
+
+        while(queryIngredients.next()) {
+            int ingredientId = queryIngredients.value(0).toInt();
+            int quantityToRemove = queryIngredients.value(1).toInt();
+
+            int currentQuantity = getResourceQuantity(ingredientId, true);
+            if(currentQuantity > 0) {
+                if(!updateResourceQuantity(ingredientId, -quantityToRemove, true)) {
+                    errorOccurred = true;
+                    QMessageBox::warning(this, "Błąd", "Nie udało się usunąć składnika o ID " + QString::number(ingredientId) + " z zasobów.");
+                    break;
+                }
+            }
+        }
+
+        if(errorOccurred) {
+            db->rollback();
+            QMessageBox::critical(this, "Błąd", "Wystąpił problem podczas usuwania składników z zasobów.");
+        } else {
+            db->commit();
+            QMessageBox::information(this, "Sukces", "Składniki przepisu zostały usunięte z zasobów.");
+        }
     }
+    resizeRowsInTableView();
+    ShowResources();
 }
 
 

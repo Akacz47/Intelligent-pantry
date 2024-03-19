@@ -18,6 +18,8 @@ SOURCES += \
     mainwindow.cpp \
     qaesencryption.cpp \
     recipes.cpp \
+    removeingredients.cpp \
+    removerecipes.cpp \
     removeresources.cpp \
     resources.cpp \
     shoppinglist.cpp
@@ -30,6 +32,8 @@ HEADERS += \
     mainwindow.h \
     qaesencryption.h \
     recipes.h \
+    removeingredients.h \
+    removerecipes.h \
     removeresources.h \
     resources.h \
     shoppinglist.h
@@ -40,6 +44,8 @@ FORMS += \
     login.ui \
     mainwindow.ui \
     recipes.ui \
+    removeingredients.ui \
+    removerecipes.ui \
     removeresources.ui \
     resources.ui \
     shoppinglist.ui

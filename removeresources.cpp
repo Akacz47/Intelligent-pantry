@@ -2,18 +2,13 @@
 #include "ui_removeresources.h"
 #include "baseclass.h"
 #include "mainwindow.h"
-#include "resources.h"
 
 RemoveResources::RemoveResources(QSqlDatabase* db, int id, QWidget *parent) :
     QDialog(parent),
     BaseClass(db, id),
-    ui(new Ui::RemoveResources),
-    resourcesHelper(new Resources(db, id, this))
+    ui(new Ui::RemoveResources)
 {
     ui->setupUi(this);
-    connect(ui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
-    connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
-    //connect(ui->removeAllButton, SIGNAL(clicked()), this, SLOT(on_removeAllButton_clicked()));
     ui->spinBox->value();
 
     MainWindow* mainWindow = qobject_cast<MainWindow*>(parent);
@@ -28,47 +23,50 @@ RemoveResources::~RemoveResources()
     delete ui;
 }
 
-void RemoveResources::removeResource(int resourceId, int quantityToRemove) {
+void RemoveResources::removeResource(int resourceId, int quantityToRemove, bool isIngredientFlag) {
     if (quantityToRemove <= 0) {
         QMessageBox::warning(this, "Błąd", "Ilość do usunięcia musi być większa od 0.");
         return;
     }
 
-    int currentQuantity = resourcesHelper->getResourceQuantity(resourceId);
+    int currentQuantity = getResourceQuantity(resourceId, isIngredientFlag);
     if (currentQuantity < quantityToRemove) {
         QMessageBox::warning(this, "Błąd", "Nie można usunąć więcej zasobów niż jest dostępne.");
         return;
     }
-    if(currentQuantity==quantityToRemove){
-        removeAllResource(resourceId);
-    }
-    else{
-    QSqlQuery query;
-    query.prepare("UPDATE resources SET quantity = quantity - ? WHERE ingrOrCraftId = ? AND userId = ?");
-    query.addBindValue(quantityToRemove);
-    query.addBindValue(resourceId);
-    query.addBindValue(id);
 
-    if (!query.exec()) {
-        QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować ilości zasobu.");
+    int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
+    if (currentQuantity == quantityToRemove) {
+        removeAllResource(resourceId, isIngredientFlag);
     } else {
-        QMessageBox::information(this, "Sukces", "Ilość zasobu została zaktualizowana.");
-        emit resourcesUpdated();
-    }
+        QSqlQuery query;
+        query.prepare("UPDATE resources SET quantity = quantity - ? WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
+        query.addBindValue(quantityToRemove);
+        query.addBindValue(resourceId);
+        query.addBindValue(id);
+        query.addBindValue(ingrOrCraftBool);
+
+        if (!query.exec()) {
+            QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować ilości zasobu.");
+        } else {
+            QMessageBox::information(this, "Sukces", "Ilość zasobu została zaktualizowana.");
+            emit resourcesUpdated();
+        }
     }
 }
 
-void RemoveResources::removeAllResource(int resourceId) {
+void RemoveResources::removeAllResource(int resourceId, bool isIngredientFlag) {
+    int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
     QSqlQuery query;
-    query.prepare("DELETE FROM resources WHERE ingrOrCraftId = ? AND userId = ?");
+    query.prepare("DELETE FROM resources WHERE ingrOrCraftId = ? AND userId = ? AND ingrOrCraftBool = ?");
     query.addBindValue(resourceId);
     query.addBindValue(id);
+    query.addBindValue(ingrOrCraftBool);
 
     if (!query.exec()) {
         QMessageBox::critical(this, "Błąd", "Nie udało się usunąć zasobu.");
     } else {
         QMessageBox::information(this, "Sukces", "Zasób został usunięty.");
-        //emit resourcesHelper->resourcesUpdated();
         emit resourcesUpdated();
     }
 }
@@ -82,13 +80,13 @@ void RemoveResources::on_removeAllButton_clicked()
         return;
     }
 
-    int resourceId = resourcesHelper->getResourceId(resourceName, isIngredientFlag);
+    int resourceId = getResourceId(resourceName, isIngredientFlag);
     if (resourceId < 0) {
         QMessageBox::warning(this, "Błąd", "Nie znaleziono zasobu w bazie danych.");
         return;
     }
 
-    removeAllResource(resourceId);
+    removeAllResource(resourceId, isIngredientFlag);
 }
 
 
@@ -102,13 +100,13 @@ void RemoveResources::on_okButton_clicked()
         return;
     }
 
-    int resourceId = resourcesHelper->getResourceId(resourceName, isIngredientFlag);
+    int resourceId = getResourceId(resourceName, isIngredientFlag);
     if (resourceId < 0) {
         QMessageBox::warning(this, "Błąd", "Nie znaleziono zasobu w bazie danych.");
         return;
     }
 
     int quantityToRemove = ui->spinBox->value();
-    removeResource(resourceId, quantityToRemove);
+    removeResource(resourceId, quantityToRemove, isIngredientFlag);
 }
 

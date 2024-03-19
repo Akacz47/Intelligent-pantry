@@ -4,7 +4,6 @@
 #include <QDialog>
 #include <QMessageBox>
 #include "baseclass.h"
-#include "resources.h"
 
 namespace Ui {
 class RemoveResources;
@@ -17,14 +16,13 @@ class RemoveResources : public QDialog, public BaseClass
 public:
     explicit RemoveResources(QSqlDatabase* db, int id, QWidget *parent = nullptr);
     ~RemoveResources();
-    void removeResource(int resourceId, int quantity);
-    void removeAllResource(int resourceId);
+    void removeResource(int resourceId, int quantity, bool);
+    void removeAllResource(int resourceId, bool isIngredientFlag);
 public slots:
     void on_removeAllButton_clicked();
     void on_okButton_clicked();
 private:
     Ui::RemoveResources *ui;
-    Resources* resourcesHelper;
 signals:
     void resourcesUpdated();
 };
