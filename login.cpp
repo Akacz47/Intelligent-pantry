@@ -122,7 +122,7 @@ void Login::on_registerButton_clicked()
         QMessageBox::critical(nullptr, "Error", "Taki użytkownik już istnieje", QMessageBox::Ok);
     else {
         QSqlQuery query;
-        query.prepare("INSERT INTO users (login, password) VALUES (?, ?)");
+        query.prepare("INSERT INTO users (login, password, kcal) VALUES (?, ?, ?)");
 
         QString login = ui->lineEditLogin->text();
         QString password = ui->lineEditPassword->text();
@@ -130,6 +130,7 @@ void Login::on_registerButton_clicked()
 
         query.bindValue(0, login);
         query.bindValue(1, password);
+        query.bindValue(2, 2000); //srednia ilosc kalorii spozywana przez czlowieka dziennie
         query.exec();
         QMessageBox::information(nullptr, "Baza danych", "Rejestracja przebiegła pomyślnie", QMessageBox::Ok);
     }

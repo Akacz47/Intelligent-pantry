@@ -4,6 +4,14 @@ BaseClass::BaseClass(QSqlDatabase* db, int id)
 {
     this->db = db;
     this->id = id;
+
+    //unit test
+    if(doesRecipeExist("Spaghetti Bolognese")){
+        qDebug() << "unit test: ok";
+    }
+    else{
+        qDebug() << "unit test: blad";
+    }
 }
 
 BaseClass::~BaseClass()

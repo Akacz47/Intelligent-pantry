@@ -12,6 +12,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     baseclass.cpp \
     ingredients.cpp \
+    kcal.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -24,6 +25,7 @@ SOURCES += \
 HEADERS += \
     baseclass.h \
     ingredients.h \
+    kcal.h \
     login.h \
     mainwindow.h \
     qaesencryption.h \
@@ -34,6 +36,7 @@ HEADERS += \
 
 FORMS += \
     ingredients.ui \
+    kcal.ui \
     login.ui \
     mainwindow.ui \
     recipes.ui \

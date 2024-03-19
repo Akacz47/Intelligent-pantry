@@ -71,8 +71,9 @@ void Recipes::addRecipeToDataBase()
 {
     //dodaj przepis do bazy danych
     QSqlQuery query;
-    query.prepare("INSERT INTO crafting (name, userId) VALUES (?, ?)");
+    query.prepare("INSERT INTO crafting (name, kcal, userId) VALUES (?, ?, ?)");
     query.addBindValue(nameOfRecipe);
+    query.addBindValue(ui->kcalSpinBox->value());
     query.addBindValue(id);
     query.exec();
 

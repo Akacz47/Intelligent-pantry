@@ -5,7 +5,7 @@
 #include "resources.h"
 #include "removeresources.h"
 #include "shoppinglist.h"
-
+#include "kcal.h"
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     QMainWindow(parent),
@@ -24,6 +24,7 @@ MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     connectActionTriggered();
     ShowResources();
     suggestedRecipeToPrepare = "";
+    maxKcal = takeMaxKcal();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
@@ -62,6 +63,9 @@ void MainWindow::connectActionTriggered()
     connect(ui->actionRecipesAdd,&QAction::triggered, this,[=]() { Recipes recipes(db,id,this); OpenWindow(&recipes); });
     connect(ui->actionResDodaj,&QAction::triggered, this,[=]() { Resources resources(db,id,this); OpenWindow(&resources); });
     connect(ui->actionResUsun,&QAction::triggered, this,[=]() { RemoveResources removeResources(db,id,this); OpenWindow(&removeResources); });
+    connect(ui->actionChangeDailyMaxKcal,&QAction::triggered, this,[=]() { Kcal kcal(db,id,maxKcal,this);
+    connect(&kcal, &Kcal::newKcal, this, &MainWindow::receiveNewKcal);
+    OpenWindow(&kcal); });
     connect(ui->actionPrintIngr,&QAction::triggered, this, &MainWindow::ShowIngredients);
     connect(ui->actionPrintRecipes,&QAction::triggered, this, &MainWindow::ShowRecipes);
     connect(ui->actionPrintResources,&QAction::triggered, this, &MainWindow::ShowResources);
@@ -141,6 +145,42 @@ void MainWindow::showRecipesOfTheShoppingList(){
     resizeRowsInTableView();
 }
 
+void MainWindow::colorKcalTableView()
+{
+    //kopiuje wartosc z model do modelBezSql aby byly widoczne kolory w kolumnie kcal
+    int rowCount = model->rowCount();
+    int columnCount = model->columnCount();
+
+    // Ustaw liczbę wierszy i kolumn w QStandardItemModel
+    modelBezSql->clear();
+    modelBezSql->setRowCount(rowCount);
+    modelBezSql->setColumnCount(columnCount);
+
+    modelBezSql->setHeaderData(0, Qt::Horizontal, "Nazwa");
+    modelBezSql->setHeaderData(1, Qt::Horizontal, "Ilość");
+    modelBezSql->setHeaderData(2, Qt::Horizontal, "Kcal");
+
+    // Kopiuj dane z QSqlQueryModel do QStandardItemModel
+    for (int row = 0; row < rowCount; ++row) {
+        for (int col = 0; col < columnCount; ++col) {
+            // Pobierz dane z QSqlQueryModel
+            QModelIndex index = model->index(row, col);
+            QVariant data = model->data(index);
+
+            // Ustaw dane w QStandardItemModel
+            QStandardItem *item = new QStandardItem(data.toString());
+            item->setEditable(false);
+            if (col==2) {
+                if(data.toInt() > maxKcal)
+                    item->setData(QColor(Qt::red).lighter(75),Qt::ForegroundRole);
+            }
+            modelBezSql->setItem(row, col, item);
+        }
+    }
+
+    ui->tableView->setModel(modelBezSql);
+}
+
 void MainWindow::saveToFile()
 {
     QString filePath = QFileDialog::getSaveFileName(this, "Zapisz plik", "", "Pliki tekstowe (*.txt)");
@@ -204,6 +244,18 @@ void MainWindow::readFromFile()
         }
     }
     file.close();
+}
+
+int MainWindow::takeMaxKcal()
+{
+    QSqlQuery query;
+    query.prepare("SELECT kcal FROM users WHERE id = ?");
+    query.addBindValue(id);
+    query.exec();
+    if(query.next()){
+        return query.value(0).toInt();;
+    }
+    return -1;
 }
 
 void MainWindow::ShowShoppingList()
@@ -297,7 +349,7 @@ void MainWindow::ShowIngredients()
 
 void MainWindow::ShowRecipes()
 {
-    QString question = "SELECT name AS 'nazwa' FROM crafting WHERE userId IN (0,?)";
+    QString question = "SELECT name AS 'nazwa', kcal FROM crafting WHERE userId IN (0,?)";
     QSqlQuery query;
     query.prepare(question);
     query.addBindValue(id);
@@ -329,11 +381,11 @@ void MainWindow::on_logOutButton_clicked()
 
 void MainWindow::on_suggetButton_clicked()
 {
-    QString question = "SELECT crafting.name, FLOOR(MIN(resources.quantity / crafting_ingredients.quantity)) AS ilość "
+    QString question = "SELECT crafting.name, FLOOR(MIN(resources.quantity / crafting_ingredients.quantity)) AS ilość, kcal "
                        "FROM crafting "
                        "JOIN crafting_ingredients ON crafting.id = crafting_ingredients.craftingId "
                        "JOIN resources ON crafting_ingredients.ingredientId = resources.ingrOrCraftId "
-                       "WHERE resources.userId = 0 OR resources.userId = ? "
+                       "WHERE (resources.userId = 0 OR resources.userId = ?) "
                        "AND resources.ingrOrCraftBool = 0 "
                        "AND crafting.id IN ( "
                             "SELECT crafting.id "
@@ -346,12 +398,13 @@ void MainWindow::on_suggetButton_clicked()
                             "HAVING COUNT(DISTINCT crafting_ingredients.ingredientId) = ( "
                                 "SELECT COUNT(*) "
                                 "FROM crafting_ingredients "
-                                "WHERE craftingId = crafting.id ) "
+                                "WHERE craftingId = crafting.id AND ( userId = ? OR userId = 0) ) "
                             "AND MIN(resources.quantity >= crafting_ingredients.quantity) = 1 ) "
                        "GROUP BY crafting.id, crafting.name;";
 
     QSqlQuery query;
     query.prepare(question);
+    query.addBindValue(id);
     query.addBindValue(id);
     query.addBindValue(id);
 
@@ -362,6 +415,7 @@ void MainWindow::on_suggetButton_clicked()
     else {
         currentlyViewedData = CurrentlyViewedData::SuggestedCraftings;
         SuggestButtonSwitchEnable();
+        colorKcalTableView();
     }
 }
 

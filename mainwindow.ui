@@ -158,10 +158,17 @@
     <addaction name="actionSaveToFile"/>
     <addaction name="actionReadFromFile"/>
    </widget>
+   <widget class="QMenu" name="menuKcal">
+    <property name="title">
+     <string>Kaloryczność</string>
+    </property>
+    <addaction name="actionChangeDailyMaxKcal"/>
+   </widget>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
    <addaction name="menuZasoby"/>
    <addaction name="menuLista_zakupow"/>
+   <addaction name="menuKcal"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
@@ -232,6 +239,11 @@
   <action name="actionReadFromFile">
    <property name="text">
     <string>Wczytaj z pliku</string>
+   </property>
+  </action>
+  <action name="actionChangeDailyMaxKcal">
+   <property name="text">
+    <string>Zmień dzienną kaloryczność</string>
    </property>
   </action>
  </widget>

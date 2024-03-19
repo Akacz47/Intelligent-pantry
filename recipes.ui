@@ -6,14 +6,42 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>453</width>
-    <height>163</height>
+    <width>451</width>
+    <height>192</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Dialog</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
+   <item row="2" column="0">
+    <widget class="QLabel" name="numberOfIngredientsLabel">
+     <property name="text">
+      <string>Ilość składników</string>
+     </property>
+    </widget>
+   </item>
+   <item row="6" column="0" colspan="2">
+    <widget class="QPushButton" name="okButton">
+     <property name="text">
+      <string>Ok</string>
+     </property>
+    </widget>
+   </item>
+   <item row="5" column="0" colspan="2">
+    <layout class="QGridLayout" name="gridLayout_2">
+     <property name="sizeConstraint">
+      <enum>QLayout::SetFixedSize</enum>
+     </property>
+    </layout>
+   </item>
+   <item row="7" column="0" colspan="2">
+    <widget class="QPushButton" name="cancelButton">
+     <property name="text">
+      <string>Cancel</string>
+     </property>
+    </widget>
+   </item>
    <item row="0" column="0">
     <widget class="QLabel" name="recipeNameLabel">
      <property name="enabled">
@@ -24,10 +52,13 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QLabel" name="numberOfIngredientsLabel">
-     <property name="text">
-      <string>Ilość składników</string>
+   <item row="2" column="1">
+    <widget class="QSpinBox" name="spinBox">
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>35</number>
      </property>
     </widget>
    </item>
@@ -38,36 +69,19 @@
      </property>
     </widget>
    </item>
-   <item row="4" column="0" colspan="2">
-    <widget class="QPushButton" name="okButton">
-     <property name="text">
-      <string>Ok</string>
-     </property>
-    </widget>
-   </item>
-   <item row="5" column="0" colspan="2">
-    <widget class="QPushButton" name="cancelButton">
-     <property name="text">
-      <string>Cancel</string>
-     </property>
-    </widget>
-   </item>
    <item row="1" column="1">
-    <widget class="QSpinBox" name="spinBox">
-     <property name="minimum">
-      <number>1</number>
-     </property>
+    <widget class="QSpinBox" name="kcalSpinBox">
      <property name="maximum">
-      <number>35</number>
+      <number>99999</number>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2">
-    <layout class="QGridLayout" name="gridLayout_2">
-     <property name="sizeConstraint">
-      <enum>QLayout::SetFixedSize</enum>
+   <item row="1" column="0">
+    <widget class="QLabel" name="kcalLabel">
+     <property name="text">
+      <string>Kaloryczność</string>
      </property>
-    </layout>
+    </widget>
    </item>
   </layout>
  </widget>
