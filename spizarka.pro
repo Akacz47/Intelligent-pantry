@@ -22,6 +22,7 @@ SOURCES += \
     removerecipes.cpp \
     removeresources.cpp \
     resources.cpp \
+    search.cpp \
     shoppinglist.cpp
 
 HEADERS += \
@@ -36,6 +37,7 @@ HEADERS += \
     removerecipes.h \
     removeresources.h \
     resources.h \
+    search.h \
     shoppinglist.h
 
 FORMS += \
@@ -48,6 +50,7 @@ FORMS += \
     removerecipes.ui \
     removeresources.ui \
     resources.ui \
+    search.ui \
     shoppinglist.ui
 
 # Default rules for deployment.

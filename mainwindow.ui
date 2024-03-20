@@ -131,6 +131,7 @@
     </property>
     <addaction name="actionIngrAdd"/>
     <addaction name="actionPrintIngr"/>
+    <addaction name="actionIngrUsun"/>
    </widget>
    <widget class="QMenu" name="menuPrzepisy">
     <property name="title">
@@ -138,6 +139,7 @@
     </property>
     <addaction name="actionRecipesAdd"/>
     <addaction name="actionPrintRecipes"/>
+    <addaction name="actionRecUsun"/>
    </widget>
    <widget class="QMenu" name="menuZasoby">
     <property name="title">
@@ -164,11 +166,18 @@
     </property>
     <addaction name="actionChangeDailyMaxKcal"/>
    </widget>
+   <widget class="QMenu" name="menuWyszukiwanie">
+    <property name="title">
+     <string>Wyszukiwanie</string>
+    </property>
+    <addaction name="actionSzukaj"/>
+   </widget>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
    <addaction name="menuZasoby"/>
    <addaction name="menuLista_zakupow"/>
    <addaction name="menuKcal"/>
+   <addaction name="menuWyszukiwanie"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
@@ -244,6 +253,21 @@
   <action name="actionChangeDailyMaxKcal">
    <property name="text">
     <string>Zmień dzienną kaloryczność</string>
+   </property>
+  </action>
+  <action name="actionIngrUsun">
+   <property name="text">
+    <string>Usuń</string>
+   </property>
+  </action>
+  <action name="actionRecUsun">
+   <property name="text">
+    <string>Usuń</string>
+   </property>
+  </action>
+  <action name="actionSzukaj">
+   <property name="text">
+    <string>Szukaj...</string>
    </property>
   </action>
  </widget>

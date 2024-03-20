@@ -8,6 +8,7 @@
 #include "removeingredients.h"
 #include "shoppinglist.h"
 #include "kcal.h"
+#include "search.h"
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     QMainWindow(parent),
@@ -70,6 +71,7 @@ void MainWindow::connectActionTriggered()
     connect(ui->actionChangeDailyMaxKcal,&QAction::triggered, this,[=]() { Kcal kcal(db,id,maxKcal,this);
     connect(&kcal, &Kcal::newKcal, this, &MainWindow::receiveNewKcal);
     OpenWindow(&kcal); });
+    connect(ui->actionSzukaj,&QAction::triggered, this,[=]() { Search search(db,id,this); OpenWindow(&search); });
     connect(ui->actionPrintIngr,&QAction::triggered, this, &MainWindow::ShowIngredients);
     connect(ui->actionPrintRecipes,&QAction::triggered, this, &MainWindow::ShowRecipes);
     connect(ui->actionPrintResources,&QAction::triggered, this, &MainWindow::ShowResources);
