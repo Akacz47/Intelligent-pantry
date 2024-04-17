@@ -72,6 +72,8 @@ private slots:
 
     void on_deleteIngrButton_clicked();
 
+    void on_actionChangePassword_triggered();
+
 private:
     Ui::MainWindow *ui;
 

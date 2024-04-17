@@ -13,7 +13,6 @@ class Ingredients : public QDialog, public BaseClass
 {
     Q_OBJECT
 
-
     void runNotification(QString, bool);
     QTimer* timer;
 

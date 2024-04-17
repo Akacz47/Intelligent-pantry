@@ -9,6 +9,8 @@
 #include "shoppinglist.h"
 #include "kcal.h"
 #include "search.h"
+#include "account.h"
+#include <QDebug>
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     QMainWindow(parent),
@@ -90,6 +92,7 @@ void MainWindow::connectActionTriggered()
     connect(ui->tableView, &QTableView::clicked, this, [this](const QModelIndex &index) {
         suggestedRecipeToPrepare = index.model()->data(index, Qt::DisplayRole).toString();
     });
+    connect(ui->actionChangePassword,&QAction::triggered,this,[=]() {Account account(db,id,this); OpenWindow(&account);});
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)
@@ -494,4 +497,8 @@ void MainWindow::on_deleteIngrButton_clicked()
     ShowResources();
 }
 
+void MainWindow::on_actionChangePassword_triggered()
+{
+
+}
 

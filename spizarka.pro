@@ -2,7 +2,7 @@ QT       += core gui sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-CONFIG += c++11
+CONFIG += c++17#11
 
 # You can make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
@@ -10,7 +10,9 @@ CONFIG += c++11
 DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
+    account.cpp \
     baseclass.cpp \
+    baseui.cpp \
     ingredients.cpp \
     kcal.cpp \
     login.cpp \
@@ -26,6 +28,7 @@ SOURCES += \
     shoppinglist.cpp
 
 HEADERS += \
+    account.h \
     baseclass.h \
     ingredients.h \
     kcal.h \
@@ -41,6 +44,7 @@ HEADERS += \
     shoppinglist.h
 
 FORMS += \
+    baseui.ui \
     ingredients.ui \
     kcal.ui \
     login.ui \
@@ -57,3 +61,10 @@ FORMS += \
 #qnx: target.path = /tmp/$${TARGET}/bin
 #else: unix:!android: target.path = /opt/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
+
+LIBS += -L$$PWD/sdk/INC/ -lVHLib
+
+INCLUDEPATH += $$PWD/sdk
+DEPENDPATH += $$PWD/sdk
+
+INCLUDEPATH += D:\Qt\Projekty\spizarka\sdk

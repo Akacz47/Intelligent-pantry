@@ -1,5 +1,7 @@
 #include "baseclass.h"
 #include "qsqlerror.h"
+#include <QDebug>
+//#include <QDebug>
 
 BaseClass::BaseClass(QSqlDatabase* db, int id)
 {
@@ -7,12 +9,12 @@ BaseClass::BaseClass(QSqlDatabase* db, int id)
     this->id = id;
 
     //unit test
-    if(doesRecipeExist("Spaghetti Bolognese")){
-        qDebug() << "unit test: ok";
-    }
-    else{
-        qDebug() << "unit test: blad";
-    }
+    // if(doesRecipeExist("Spaghetti Bolognese")){
+    //     qDebug() << "unit test: ok";
+    // }
+    // else{
+    //     qDebug() << "unit test: blad";
+    // }
 }
 
 BaseClass::~BaseClass()

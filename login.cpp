@@ -1,6 +1,7 @@
 #include "login.h"
 #include "ui_login.h"
 #include "qaesencryption.h"
+#include <QDebug>
 
 Login::Login(QWidget *parent) :
     QDialog(parent),
@@ -8,6 +9,7 @@ Login::Login(QWidget *parent) :
 {
     ui->setupUi(this);
     mw = nullptr;
+    ui->lineEditPassword->setEchoMode(QLineEdit::Password);
     db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
     db->setHostName("db.zut.edu.pl");
     db->setUserName("pa51074");
@@ -102,6 +104,29 @@ void Login::decodeText(QString &l, QString &p)
     p = QString(encryption.removePadding(decodedPassword));
 }
 
+bool Login::checkPassword()
+{
+    bool hasLower = false;
+    bool hasUpper = false;
+    bool hasDigit = false;
+    bool hasSpecial = false;
+    QString pass = ui->lineEditPassword->text();
+
+    for (const QChar& c : pass) {
+        if (c.isLower()) {
+            hasLower = true;
+        } else if (c.isUpper()) {
+            hasUpper = true;
+        } else if (c.isDigit()) {
+            hasDigit = true;
+        } else if (!c.isLetterOrNumber()) {
+            hasSpecial = true;
+        }
+    }
+
+    return hasLower && hasUpper && hasDigit && hasSpecial;
+}
+
 void Login::on_loginButton_clicked(){
     if(isLineEditEmpty())
         QMessageBox::warning(nullptr, "Warning", "Proszę uzupełnić wszystkie pola" ,QMessageBox::Ok);
@@ -120,6 +145,12 @@ void Login::on_registerButton_clicked()
         QMessageBox::warning(nullptr, "Warning", "Proszę uzupełnić wszystkie pola" ,QMessageBox::Ok);
     else if(check_existing_users(true))
         QMessageBox::critical(nullptr, "Error", "Taki użytkownik już istnieje", QMessageBox::Ok);
+    else if(!checkPassword())
+        QMessageBox::warning(nullptr, "Warning", "Hasło nie spełnia wymagań, ponieważ musi zawierać minimum:"
+                                                 "\n-10 znaków."
+                                                 "\n-jedną dużą i małą literę."
+                                                 "\n-jedną cyfrę."
+                                                 "\n-jeden znak specjalny." ,QMessageBox::Ok);
     else {
         QSqlQuery query;
         query.prepare("INSERT INTO users (login, password, kcal) VALUES (?, ?, ?)");

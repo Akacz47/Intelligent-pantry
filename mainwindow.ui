@@ -160,11 +160,12 @@
     <addaction name="actionSaveToFile"/>
     <addaction name="actionReadFromFile"/>
    </widget>
-   <widget class="QMenu" name="menuKcal">
+   <widget class="QMenu" name="menuAccount">
     <property name="title">
-     <string>Kaloryczność</string>
+     <string>Konto</string>
     </property>
     <addaction name="actionChangeDailyMaxKcal"/>
+    <addaction name="actionChangePassword"/>
    </widget>
    <widget class="QMenu" name="menuWyszukiwanie">
     <property name="title">
@@ -176,8 +177,8 @@
    <addaction name="menuPrzepisy"/>
    <addaction name="menuZasoby"/>
    <addaction name="menuLista_zakupow"/>
-   <addaction name="menuKcal"/>
    <addaction name="menuWyszukiwanie"/>
+   <addaction name="menuAccount"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
@@ -268,6 +269,11 @@
   <action name="actionSzukaj">
    <property name="text">
     <string>Szukaj...</string>
+   </property>
+  </action>
+  <action name="actionChangePassword">
+   <property name="text">
+    <string>Zmień hasło</string>
    </property>
   </action>
  </widget>

@@ -1,6 +1,7 @@
 #include "search.h"
 #include "qsqlerror.h"
 #include "ui_search.h"
+#include <QDebug>
 
 Search::Search(QSqlDatabase* db, int id, QWidget *parent) :
     QDialog(parent),
