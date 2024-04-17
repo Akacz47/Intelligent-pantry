@@ -12,7 +12,6 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     account.cpp \
     baseclass.cpp \
-    baseui.cpp \
     ingredients.cpp \
     kcal.cpp \
     login.cpp \
