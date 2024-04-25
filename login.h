@@ -8,27 +8,24 @@
 #include <QtSql/QSqlQueryModel>
 #include <QMessageBox>
 #include "mainwindow.h"
-#include <QCryptographicHash>
+#include "baseclass.h"
 
 namespace Ui {
 class Login;
 }
 
-class Login : public QDialog
+class Login : public QDialog, public BaseClass
 {
     Q_OBJECT
 
-    QSqlDatabase* db;
+    //QSqlDatabase* db;
     MainWindow* mw;
     QString login;
-    int id;
+    //int id;
 
     void open_MainWindow();
     bool check_existing_users(bool checkLoginOnly=false);
     bool isLineEditEmpty();
-    void encodeText(QString& l, QString& p);
-    void decodeText(QString &l, QString &p);
-    bool checkPassword();
     //QByteArray key = "0123456789abcdef";
     QString iv = "this-is-my-vector";
     QString key = "0123456789abcdef";

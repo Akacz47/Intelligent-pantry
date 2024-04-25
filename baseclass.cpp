@@ -1,7 +1,6 @@
 #include "baseclass.h"
 #include "qsqlerror.h"
 #include <QDebug>
-//#include <QDebug>
 
 BaseClass::BaseClass(QSqlDatabase* db, int id)
 {
@@ -96,6 +95,47 @@ int BaseClass::searchResourceQuantity(QString name)
         return quantity;
     }
     return 0;
+}
+
+void BaseClass::encodeText(QString key, QString iv, QString& text)
+{
+    QByteArray hashKey = QCryptographicHash::hash(key.toLocal8Bit(), QCryptographicHash::Sha256);
+    QByteArray hashIV = QCryptographicHash::hash(iv.toLocal8Bit(), QCryptographicHash::Md5);
+    //QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
+    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CBC);
+    QByteArray encodedText = encryption.encode(text.toUtf8(), hashKey, hashIV).toHex();
+    text = encodedText;
+}
+
+void BaseClass::decodeText(QString key, QString iv, QString& text)
+{
+    QByteArray hashKey = QCryptographicHash::hash(key.toLocal8Bit(), QCryptographicHash::Sha256);
+    QByteArray hashIV = QCryptographicHash::hash(iv.toLocal8Bit(), QCryptographicHash::Md5);
+    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CBC);
+    QByteArray decodedLogin = encryption.decode(QByteArray::fromHex(text.toUtf8()), hashKey, hashIV);
+    text = QString(encryption.removePadding(decodedLogin));
+}
+
+bool BaseClass::checkPassword(QString& pass)
+{
+    bool hasLower = false;
+    bool hasUpper = false;
+    bool hasDigit = false;
+    bool hasSpecial = false;
+
+    for (const QChar& c : pass) {
+        if (c.isLower()) {
+            hasLower = true;
+        } else if (c.isUpper()) {
+            hasUpper = true;
+        } else if (c.isDigit()) {
+            hasDigit = true;
+        } else if (!c.isLetterOrNumber()) {
+            hasSpecial = true;
+        }
+    }
+
+    return hasLower && hasUpper && hasDigit && hasSpecial;
 }
 
 int BaseClass::getResourceQuantity(int resourceId, bool isIngredientFlag) {

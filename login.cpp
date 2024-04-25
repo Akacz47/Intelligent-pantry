@@ -1,10 +1,9 @@
 #include "login.h"
 #include "ui_login.h"
-#include "qaesencryption.h"
 #include <QDebug>
 
 Login::Login(QWidget *parent) :
-    QDialog(parent),
+    QDialog(parent),BaseClass(nullptr,-1),
     ui(new Ui::Login)
 {
     ui->setupUi(this);
@@ -15,10 +14,8 @@ Login::Login(QWidget *parent) :
     db->setUserName("pa51074");
     db->setPassword("rauimqxG");
     db->setDatabaseName("pa51074");
-    if(db->open()){
-        //QMessageBox::information(nullptr, "Baza danych", "Udało się podłączyć do bazy danych.", QMessageBox::Ok);
+    if(db->open())
         qDebug() << "Podłączono do bazy danych";
-    }
     setWindowTitle("Logowanie");
 }
 
@@ -50,7 +47,7 @@ bool Login::check_existing_users(bool checkLoginOnly)
     login = ui->lineEditLogin->text();
     QString password = ui->lineEditPassword->text();
     QSqlQuery query;
-    query.prepare("SELECT * FROM users");
+    query.prepare("SELECT id, login, currentPassword FROM users");
     query.exec();
 
     QString encryptedLogin;
@@ -58,7 +55,8 @@ bool Login::check_existing_users(bool checkLoginOnly)
     while (query.next()) {
         encryptedLogin = query.value(1).toByteArray();
         encryptedPassword = query.value(2).toByteArray();
-        decodeText(encryptedLogin,encryptedPassword);
+        decodeText(key,iv,encryptedLogin);
+        decodeText(key,iv,encryptedPassword);
         if(checkLoginOnly && login == encryptedLogin)
             return true;
         else {
@@ -81,52 +79,6 @@ bool Login::isLineEditEmpty()
     return false;
 }
 
-void Login::encodeText(QString& l, QString& p)
-{
-    QByteArray hashKey = QCryptographicHash::hash(key.toLocal8Bit(), QCryptographicHash::Sha256);
-    QByteArray hashIV = QCryptographicHash::hash(iv.toLocal8Bit(), QCryptographicHash::Md5);
-    //QAESEncryption encryption(QAESEncryption::AES_128, QAESEncryption::ECB);
-    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CBC);
-    QByteArray encodedLogin = encryption.encode(l.toUtf8(), hashKey, hashIV).toHex();
-    QByteArray encodedPassword = encryption.encode(p.toUtf8(), hashKey, hashIV).toHex();
-    l = encodedLogin;
-    p = encodedPassword;
-}
-
-void Login::decodeText(QString &l, QString &p)
-{
-    QByteArray hashKey = QCryptographicHash::hash(key.toLocal8Bit(), QCryptographicHash::Sha256);
-    QByteArray hashIV = QCryptographicHash::hash(iv.toLocal8Bit(), QCryptographicHash::Md5);
-    QAESEncryption encryption(QAESEncryption::AES_256, QAESEncryption::CBC);
-    QByteArray decodedLogin = encryption.decode(QByteArray::fromHex(l.toUtf8()), hashKey, hashIV);
-    QByteArray decodedPassword = encryption.decode(QByteArray::fromHex(p.toUtf8()), hashKey, hashIV);
-    l = QString(encryption.removePadding(decodedLogin));
-    p = QString(encryption.removePadding(decodedPassword));
-}
-
-bool Login::checkPassword()
-{
-    bool hasLower = false;
-    bool hasUpper = false;
-    bool hasDigit = false;
-    bool hasSpecial = false;
-    QString pass = ui->lineEditPassword->text();
-
-    for (const QChar& c : pass) {
-        if (c.isLower()) {
-            hasLower = true;
-        } else if (c.isUpper()) {
-            hasUpper = true;
-        } else if (c.isDigit()) {
-            hasDigit = true;
-        } else if (!c.isLetterOrNumber()) {
-            hasSpecial = true;
-        }
-    }
-
-    return hasLower && hasUpper && hasDigit && hasSpecial;
-}
-
 void Login::on_loginButton_clicked(){
     if(isLineEditEmpty())
         QMessageBox::warning(nullptr, "Warning", "Proszę uzupełnić wszystkie pola" ,QMessageBox::Ok);
@@ -141,11 +93,12 @@ void Login::on_loginButton_clicked(){
 
 void Login::on_registerButton_clicked()
 {
+    QString password = ui->lineEditPassword->text();
     if(isLineEditEmpty())
         QMessageBox::warning(nullptr, "Warning", "Proszę uzupełnić wszystkie pola" ,QMessageBox::Ok);
     else if(check_existing_users(true))
         QMessageBox::critical(nullptr, "Error", "Taki użytkownik już istnieje", QMessageBox::Ok);
-    else if(!checkPassword())
+    else if(!checkPassword(password))
         QMessageBox::warning(nullptr, "Warning", "Hasło nie spełnia wymagań, ponieważ musi zawierać minimum:"
                                                  "\n-10 znaków."
                                                  "\n-jedną dużą i małą literę."
@@ -153,15 +106,16 @@ void Login::on_registerButton_clicked()
                                                  "\n-jeden znak specjalny." ,QMessageBox::Ok);
     else {
         QSqlQuery query;
-        query.prepare("INSERT INTO users (login, password, kcal) VALUES (?, ?, ?)");
+        query.prepare("INSERT INTO users (login, oldPassword, currentPassword, kcal) VALUES (?, ?, ?, ?)");
 
         QString login = ui->lineEditLogin->text();
-        QString password = ui->lineEditPassword->text();
-        encodeText(login, password);
+        encodeText(key,iv,login);
+        encodeText(key,iv,password);
 
         query.bindValue(0, login);
         query.bindValue(1, password);
-        query.bindValue(2, 2000); //srednia ilosc kalorii spozywana przez czlowieka dziennie
+        query.bindValue(2, password);
+        query.bindValue(3, 2000); //srednia ilosc kalorii spozywana przez czlowieka dziennie
         query.exec();
         QMessageBox::information(nullptr, "Baza danych", "Rejestracja przebiegła pomyślnie", QMessageBox::Ok);
     }

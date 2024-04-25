@@ -5,6 +5,8 @@
 #include <QtSql/QSqlDatabase>
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
+#include <QCryptographicHash>
+#include "qaesencryption.h"
 
 class BaseClass
 {
@@ -17,6 +19,9 @@ protected:
     int searchIngrId(QString);
     int searchCraftId(QString);
     int searchResourceQuantity(QString);
+    void encodeText(QString, QString, QString&);
+    void decodeText(QString, QString, QString&);
+    bool checkPassword(QString&);
 
 public:
     BaseClass(QSqlDatabase* db, int id);
