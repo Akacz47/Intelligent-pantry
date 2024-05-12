@@ -74,8 +74,8 @@ void Resources::addNewResource(QString resourceName, int quantity, bool isIngred
     }
 }
 
-void Resources::on_okButton_clicked(){
-QString resourceName = ui->resourcesNameLineEdit->text();
+void Resources::on_okButton_clicked() {
+    QString resourceName = ui->resourcesNameLineEdit->text();
     int quantity = ui->spinBox->value();
 
     if (resourceName.isEmpty()) {

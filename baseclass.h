@@ -6,6 +6,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
 #include <QCryptographicHash>
+#include <QTimer>
 #include "qaesencryption.h"
 
 class BaseClass
