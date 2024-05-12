@@ -5,7 +5,6 @@
 #include "resources.h"
 #include "removeresources.h"
 #include "removerecipes.h"
-#include "removeingredients.h"
 #include "shoppinglist.h"
 #include "kcal.h"
 #include "search.h"
