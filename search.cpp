@@ -12,6 +12,7 @@ Search::Search(QSqlDatabase* db, int id, QWidget *parent) :
     ui->defaultRadioButton->setChecked(true);
     ui->allRadioButton_3->setChecked(true);
     ui->searchingTableView->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
+    setWindowTitle("Wyszukiwanie");
 }
 
 Search::~Search()

@@ -10,6 +10,7 @@ Recipes::Recipes(QSqlDatabase* db, int id, QWidget *parent) :
     ui->setupUi(this);
     WasOkClicled = false;
     quantityOfIngredients = 0;
+    setWindowTitle("Przepisy");
 }
 
 Recipes::~Recipes()

@@ -6,10 +6,21 @@
 #include "removeresources.h"
 #include "removerecipes.h"
 #include "shoppinglist.h"
-#include "kcal.h"
 #include "search.h"
 #include "account.h"
 #include <QDebug>
+#include "VHHandsetAPI.h"
+
+// QString byteToString(const BYTE *data, int length)
+// {
+//     QString result;
+//     for (int i = 1; i < length; ++i)
+//     {
+//         // Dodajemy kolejne bajty do wynikowego QStringa jako szesnastkowe wartości
+//         result += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper();
+//     }
+//     return result;
+// }
 
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     QMainWindow(parent),
@@ -28,7 +39,9 @@ MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     connectActionTriggered();
     ShowResources();
     suggestedRecipeToPrepare = "";
-    maxKcal = takeMaxKcal();
+
+    userSettings = nullptr;
+    loadSettings();
 }
 
 void MainWindow::resizeEvent(QResizeEvent *event) {
@@ -69,9 +82,7 @@ void MainWindow::connectActionTriggered()
     connect(ui->actionRecUsun,&QAction::triggered, this,[=]() { RemoveRecipes removerecipes(db,id,this); OpenWindow(&removerecipes); });
     connect(ui->actionResDodaj,&QAction::triggered, this,[=]() { Resources resources(db,id,this); OpenWindow(&resources); });
     connect(ui->actionResUsun,&QAction::triggered, this,[=]() { RemoveResources removeResources(db,id,this); OpenWindow(&removeResources); });
-    connect(ui->actionChangeDailyMaxKcal,&QAction::triggered, this,[=]() { Kcal kcal(db,id,maxKcal,this);
-    connect(&kcal, &Kcal::newKcal, this, &MainWindow::receiveNewKcal);
-    OpenWindow(&kcal); });
+    connect(ui->actionSettings,&QAction::triggered, this,[=]() { Settings settings(db,id,userSettings,this); OpenWindow(&settings); });
     connect(ui->actionSzukaj,&QAction::triggered, this,[=]() { Search search(db,id,this); OpenWindow(&search); });
     connect(ui->actionPrintIngr,&QAction::triggered, this, &MainWindow::ShowIngredients);
     connect(ui->actionPrintRecipes,&QAction::triggered, this, &MainWindow::ShowRecipes);
@@ -182,7 +193,7 @@ void MainWindow::colorKcalTableView()
             QStandardItem *item = new QStandardItem(data.toString());
             item->setEditable(false);
             if (col==2) {
-                if(data.toInt() > maxKcal)
+                if(data.toInt() > userSettings->maxKcal)
                     item->setData(QColor(Qt::red).lighter(75),Qt::ForegroundRole);
             }
             modelBezSql->setItem(row, col, item);
@@ -257,16 +268,18 @@ void MainWindow::readFromFile()
     file.close();
 }
 
-int MainWindow::takeMaxKcal()
+void MainWindow::loadSettings()
 {
+    if(userSettings == nullptr)
+        userSettings = new UserSettings();
     QSqlQuery query;
-    query.prepare("SELECT kcal FROM users WHERE id = ?");
+    query.prepare("SELECT kcal, rfidBool FROM users WHERE id = ?");
     query.addBindValue(id);
     query.exec();
     if(query.next()){
-        return query.value(0).toInt();;
+        userSettings->maxKcal = query.value(0).toInt();
+        userSettings->rfidBool = query.value(1).toBool();
     }
-    return -1;
 }
 
 void MainWindow::ShowShoppingList()
@@ -375,11 +388,13 @@ MainWindow::~MainWindow()
     delete ui;
     delete model;
     delete modelBezSql;
+    delete userSettings;
     if(!logOutClicked)
         loginWindow->deleteLater();
     loginWindow = nullptr;
     model = nullptr;
     modelBezSql = nullptr;
+    userSettings = nullptr;
     qDebug() << "Jestem w MainWindow";
 }
 

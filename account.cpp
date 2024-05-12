@@ -8,6 +8,7 @@ Account::Account(QSqlDatabase* db, int id, QWidget *parent):QDialog(parent),
     lineEdit1->setEchoMode(QLineEdit::Password);
     lineEdit2->setEchoMode(QLineEdit::Password);
     connect(pushButtonOk,&QPushButton::clicked,this,&Account::okPressed);
+    setWindowTitle("Konto");
 }
 
 void Account::okPressed()

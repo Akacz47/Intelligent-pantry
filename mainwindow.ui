@@ -164,7 +164,7 @@
     <property name="title">
      <string>Konto</string>
     </property>
-    <addaction name="actionChangeDailyMaxKcal"/>
+    <addaction name="actionSettings"/>
     <addaction name="actionChangePassword"/>
    </widget>
    <widget class="QMenu" name="menuWyszukiwanie">
@@ -251,9 +251,9 @@
     <string>Wczytaj z pliku</string>
    </property>
   </action>
-  <action name="actionChangeDailyMaxKcal">
+  <action name="actionSettings">
    <property name="text">
-    <string>Zmień dzienną kaloryczność</string>
+    <string>Ustawienia</string>
    </property>
   </action>
   <action name="actionIngrUsun">

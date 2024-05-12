@@ -27,14 +27,15 @@ int main(int argc, char *argv[])
     // result = VH_ConnectScannerUsb(&hScanner);
     // // Tutaj możesz dodać więcej kodu do obsługi czytnika RFID, na przykład odczytywanie tagów itp.
 
-    // BYTE IDBuffer[100];//5
+    // BYTE IDBuffer[100];//24, 100
     // int nCounter = 0;
     // result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
     // if (result == _OK) {
     //     qDebug() << "Odczytano EPC NO.:";
+    //     //qDebug() << "Tag" << ":" << byteToString(IDBuffer,13);//5
     //     for (int i = 0; i < nCounter; ++i) {
-    //         qDebug() << "Tag" << i+1 << ":" << byteToString(IDBuffer,5);
-    //         //qDebug() << "Tag" << i+1 << ":" << IDBuffer;
+    //         qDebug() << "Tag" << i+1 << ":" << byteToString(IDBuffer,13);//5
+    //         // qDebug() << "Tag" << i+1 << ":" << IDBuffer;
     //     }
     // } else {
     //     qDebug() << "Błąd odczytu EPC NO.: " << result;

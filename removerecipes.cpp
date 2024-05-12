@@ -8,6 +8,7 @@ RemoveRecipes::RemoveRecipes(QSqlDatabase* db, int id, QWidget *parent) :
 {
     ui->setupUi(this);
     connect(ui->cancelButton, &QPushButton::clicked, this, &RemoveRecipes::reject);
+    setWindowTitle("Przepisy");
 }
 
 

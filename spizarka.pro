@@ -13,7 +13,6 @@ SOURCES += \
     account.cpp \
     baseclass.cpp \
     ingredients.cpp \
-    kcal.cpp \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -23,13 +22,13 @@ SOURCES += \
     removeresources.cpp \
     resources.cpp \
     search.cpp \
+    settings.cpp \
     shoppinglist.cpp
 
 HEADERS += \
     account.h \
     baseclass.h \
     ingredients.h \
-    kcal.h \
     login.h \
     mainwindow.h \
     qaesencryption.h \
@@ -38,12 +37,12 @@ HEADERS += \
     removeresources.h \
     resources.h \
     search.h \
+    settings.h \
     shoppinglist.h
 
 FORMS += \
     baseui.ui \
     ingredients.ui \
-    kcal.ui \
     login.ui \
     mainwindow.ui \
     recipes.ui \
@@ -51,6 +50,7 @@ FORMS += \
     removeresources.ui \
     resources.ui \
     search.ui \
+    settings.ui \
     shoppinglist.ui
 
 # Default rules for deployment.

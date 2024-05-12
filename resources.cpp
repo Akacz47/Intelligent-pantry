@@ -14,6 +14,7 @@ Resources::Resources(QSqlDatabase* db, int id, QWidget *parent) :
         connect(this, SIGNAL(resourcesUpdated()), mainWindow, SLOT(ShowResources()));
         connect(this, SIGNAL(resourcesUpdated()), mainWindow, SLOT(resizeRowsInTableView()));
     }
+    setWindowTitle("Zasoby");
 }
 
 Resources::~Resources()

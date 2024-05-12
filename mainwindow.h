@@ -14,6 +14,7 @@
 #include <QTextStream>
 
 #include "baseclass.h"
+#include "settings.h"
 
 
 QT_BEGIN_NAMESPACE
@@ -33,7 +34,8 @@ class MainWindow : public QMainWindow, public BaseClass
     QMap<QString, int> ingredientsOfTheRecipeMap;
     QMap<QString, int> namesOfAddedRecipesToShoppingListMap;
     QMap<QString, int> ingredientsManuallyAddedMap;
-    int maxKcal;
+
+    UserSettings* userSettings;
 
     void SetTableView(QSqlQuery&);
     enum class CurrentlyViewedData{
@@ -56,7 +58,7 @@ class MainWindow : public QMainWindow, public BaseClass
 
     void saveToFile();
     void readFromFile();
-    int takeMaxKcal();
+    void loadSettings();
 
 public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);
@@ -90,9 +92,6 @@ public slots:
     void ShowShoppingList();
     void receiveMap(const QMap<QString, int> &map) {
         ingredientsManuallyAddedMap = map;
-    }
-    void receiveNewKcal(const int& kcal){
-        maxKcal = kcal;
     }
 
 };

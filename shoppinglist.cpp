@@ -8,6 +8,7 @@ ShoppingList::ShoppingList(QSqlDatabase* db, int id, QMap<QString, int>& mapa,QW
 {
     ui->setupUi(this);
     ingredientsManuallyAddedMap = mapa;
+    setWindowTitle("Lista zakupów");
 }
 
 ShoppingList::~ShoppingList()
