@@ -7,6 +7,7 @@
 #include <QtSql/QSqlQueryModel>
 #include <QCryptographicHash>
 #include "qaesencryption.h"
+#include "VHHandsetAPI.h"
 
 class BaseClass
 {
@@ -22,6 +23,7 @@ protected:
     void encodeText(QString, QString, QString&);
     void decodeText(QString, QString, QString&);
     bool checkPassword(QString&);
+    bool isRfidConnected();
 
 public:
     BaseClass(QSqlDatabase* db, int id);

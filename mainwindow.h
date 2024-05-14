@@ -58,7 +58,7 @@ class MainWindow : public QMainWindow, public BaseClass
 
     void saveToFile();
     void readFromFile();
-    void loadSettings();
+
 
 public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);
@@ -75,6 +75,8 @@ private slots:
     void on_deleteIngrButton_clicked();
 
     void on_actionChangePassword_triggered();
+
+    void loadSettings();
 
 private:
     Ui::MainWindow *ui;

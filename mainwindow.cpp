@@ -8,6 +8,7 @@
 #include "shoppinglist.h"
 #include "search.h"
 #include "account.h"
+#include "rfid.h"
 #include <QDebug>
 #include "VHHandsetAPI.h"
 
@@ -82,7 +83,9 @@ void MainWindow::connectActionTriggered()
     connect(ui->actionRecUsun,&QAction::triggered, this,[=]() { RemoveRecipes removerecipes(db,id,this); OpenWindow(&removerecipes); });
     connect(ui->actionResDodaj,&QAction::triggered, this,[=]() { Resources resources(db,id,this); OpenWindow(&resources); });
     connect(ui->actionResUsun,&QAction::triggered, this,[=]() { RemoveResources removeResources(db,id,this); OpenWindow(&removeResources); });
-    connect(ui->actionSettings,&QAction::triggered, this,[=]() { Settings settings(db,id,userSettings,this); OpenWindow(&settings); });
+    connect(ui->actionSettings,&QAction::triggered, this,[=]() { Settings settings(db,id,userSettings,this);
+    connect(&settings,&Settings::updateSettings,this,&MainWindow::loadSettings);
+    OpenWindow(&settings); });
     connect(ui->actionSzukaj,&QAction::triggered, this,[=]() { Search search(db,id,this); OpenWindow(&search); });
     connect(ui->actionPrintIngr,&QAction::triggered, this, &MainWindow::ShowIngredients);
     connect(ui->actionPrintRecipes,&QAction::triggered, this, &MainWindow::ShowRecipes);
@@ -103,6 +106,8 @@ void MainWindow::connectActionTriggered()
         suggestedRecipeToPrepare = index.model()->data(index, Qt::DisplayRole).toString();
     });
     connect(ui->actionChangePassword,&QAction::triggered,this,[=]() {Account account(db,id,this); OpenWindow(&account);});
+
+    connect(ui->actionBindRfidTag,&QAction::triggered,this,[=]() {Rfid rfid(db,id,new BindTag(db,id,false),this); OpenWindow(&rfid);});
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)
@@ -270,16 +275,21 @@ void MainWindow::readFromFile()
 
 void MainWindow::loadSettings()
 {
-    if(userSettings == nullptr)
+    if(userSettings == nullptr){
         userSettings = new UserSettings();
-    QSqlQuery query;
-    query.prepare("SELECT kcal, rfidBool FROM users WHERE id = ?");
-    query.addBindValue(id);
-    query.exec();
-    if(query.next()){
-        userSettings->maxKcal = query.value(0).toInt();
-        userSettings->rfidBool = query.value(1).toBool();
+        QSqlQuery query;
+        query.prepare("SELECT kcal FROM users WHERE id = ?");
+        query.addBindValue(id);
+        query.exec();
+        if(query.next()){
+            userSettings->maxKcal = query.value(0).toInt();
+            //userSettings->rfidBool = query.value(1).toBool();
+        }
+
+        userSettings->rfidBool = isRfidConnected();
     }
+
+    ui->menuRFID->setEnabled(userSettings->rfidBool);
 }
 
 void MainWindow::ShowShoppingList()

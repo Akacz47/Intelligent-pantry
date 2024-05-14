@@ -26,8 +26,9 @@ void Ingredients::okButton()
 
 OperationIngredientsStrategy::~OperationIngredientsStrategy() {
     ui = nullptr;
-    delete timer;
     timer = nullptr;
+    if (useTimer)
+        delete timer;
 }
 
 void OperationIngredientsStrategy::runNotification(QString text, bool good)
@@ -37,14 +38,17 @@ void OperationIngredientsStrategy::runNotification(QString text, bool good)
     else
         ui->notificationLabel->setStyleSheet("color: red;");
     ui->notificationLabel->setText(text);
-    timer->start(3000);
+    if(useTimer)
+        timer->start(3000);
 }
 
 void OperationIngredientsStrategy::setupIngredientUi(Ui::Ingredients *ui)
 {
     this->ui = ui;
-    timer = new QTimer(this);
-    connect(timer,&QTimer::timeout,[&]() { timer->stop(); this->ui->notificationLabel->setText(""); }); //[=] jest po to, aby ui było widoczne
+    if (useTimer){
+        timer = new QTimer(this);
+        connect(timer,&QTimer::timeout,[&]() { timer->stop(); this->ui->notificationLabel->setText(""); }); //[=] jest po to, aby ui było widoczne
+    }
 }
 
 AddIngredients::AddIngredients(QSqlDatabase *db, int id) : BaseClass(db,id) {}

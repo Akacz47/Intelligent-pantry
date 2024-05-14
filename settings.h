@@ -4,6 +4,7 @@
 #include <QDialog>
 #include "baseclass.h"
 
+
 namespace Ui {
 class Settings;
 }
@@ -23,6 +24,9 @@ public:
 
 private slots:
     void on_okButton_clicked();
+
+signals:
+    void updateSettings();
 
 private:
     Ui::Settings *ui;

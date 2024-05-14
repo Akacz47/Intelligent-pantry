@@ -22,30 +22,35 @@ int main(int argc, char *argv[])
     w.show();
 
     // apiReturn result = VH_InitUsb(NULL);
-    // //apiReturn result;
+
     // HANDLE hScanner;
     // result = VH_ConnectScannerUsb(&hScanner);
-    // // Tutaj możesz dodać więcej kodu do obsługi czytnika RFID, na przykład odczytywanie tagów itp.
-
-    // BYTE IDBuffer[100];//24, 100
-    // int nCounter = 0;
-    // result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
     // if (result == _OK) {
-    //     qDebug() << "Odczytano EPC NO.:";
-    //     //qDebug() << "Tag" << ":" << byteToString(IDBuffer,13);//5
-    //     for (int i = 0; i < nCounter; ++i) {
-    //         qDebug() << "Tag" << i+1 << ":" << byteToString(IDBuffer,13);//5
-    //         // qDebug() << "Tag" << i+1 << ":" << IDBuffer;
+    //     qDebug() << result;
+
+    //     BYTE IDBuffer[100];//24, 100
+    //     int nCounter = 0;
+    //     result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
+    //     if (result == _OK) {
+    //         qDebug() << "Odczytano EPC NO.:";
+    //         //qDebug() << "Tag" << ":" << byteToString(IDBuffer,13);//5
+    //         for (int i = 0; i < nCounter; ++i) {
+    //             qDebug() << "Tag" << i+1 << ":" << byteToString(IDBuffer,13);//5
+    //             // qDebug() << "Tag" << i+1 << ":" << IDBuffer;
+    //         }
+    //     } else {
+    //         qDebug() << "Błąd odczytu EPC NO.: " << result;
     //     }
-    // } else {
-    //     qDebug() << "Błąd odczytu EPC NO.: " << result;
+
+    //     // Zamknięcie połączenia USB
+    //     result = VH_DisconnectScannerUsb(hScanner);
+
+    //     // Zamknięcie połączenia USB
+    //     result = VH_CloseUsb();
     // }
-
-    // // Zamknięcie połączenia USB
-    // result = VH_DisconnectScannerUsb(hScanner);
-
-    // // Zamknięcie połączenia USB
-    // result = VH_CloseUsb();
+    // else {
+    //     qDebug() << "Brak podlaczonego czytnika rfid";
+    // }
 
     return a.exec();
 }

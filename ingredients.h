@@ -12,9 +12,11 @@ class Ingredients;
 // Interfejs strategii
 class OperationIngredientsStrategy : public QObject {
     Q_OBJECT
+    bool useTimer;
 public:
     virtual void execute() = 0;
     virtual ~OperationIngredientsStrategy();
+    OperationIngredientsStrategy(bool useTimer = true) { this->useTimer = useTimer; };
     void setupIngredientUi(Ui::Ingredients* ui);
 protected:
     void runNotification(QString, bool);
@@ -25,14 +27,14 @@ protected:
 // Konkretna strategia dla dodawania składników
 class AddIngredients : public OperationIngredientsStrategy, public BaseClass {
 public:
-    AddIngredients(QSqlDatabase* db, int id);
+    AddIngredients(QSqlDatabase*, int);
     void execute() override;
 };
 
 // Konkretna strategia dla usuwania składników
 class RemoveIngredients : public OperationIngredientsStrategy, public BaseClass {
 public:
-    RemoveIngredients(QSqlDatabase* db, int id);
+    RemoveIngredients(QSqlDatabase*, int);
     void execute() override;
 };
 

@@ -138,6 +138,19 @@ bool BaseClass::checkPassword(QString& pass)
     return hasLower && hasUpper && hasDigit && hasSpecial;
 }
 
+bool BaseClass::isRfidConnected()
+{
+    VH_InitUsb(NULL);
+    HANDLE hScanner;
+    apiReturn result = VH_ConnectScannerUsb(&hScanner);
+    if (result != _OK)
+        return false;
+
+    VH_DisconnectScannerUsb(hScanner);
+    VH_CloseUsb();
+    return true;
+}
+
 int BaseClass::getResourceQuantity(int resourceId, bool isIngredientFlag) {
     int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
 

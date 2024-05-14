@@ -21,6 +21,7 @@ SOURCES += \
     removerecipes.cpp \
     removeresources.cpp \
     resources.cpp \
+    rfid.cpp \
     search.cpp \
     settings.cpp \
     shoppinglist.cpp
@@ -36,6 +37,7 @@ HEADERS += \
     removerecipes.h \
     removeresources.h \
     resources.h \
+    rfid.h \
     search.h \
     settings.h \
     shoppinglist.h

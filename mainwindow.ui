@@ -173,12 +173,22 @@
     </property>
     <addaction name="actionSzukaj"/>
    </widget>
+   <widget class="QMenu" name="menuRFID">
+    <property name="enabled">
+     <bool>true</bool>
+    </property>
+    <property name="title">
+     <string>RFID</string>
+    </property>
+    <addaction name="actionBindRfidTag"/>
+   </widget>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
    <addaction name="menuZasoby"/>
    <addaction name="menuLista_zakupow"/>
    <addaction name="menuWyszukiwanie"/>
    <addaction name="menuAccount"/>
+   <addaction name="menuRFID"/>
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="actionOption_3">
@@ -274,6 +284,11 @@
   <action name="actionChangePassword">
    <property name="text">
     <string>Zmień hasło</string>
+   </property>
+  </action>
+  <action name="actionBindRfidTag">
+   <property name="text">
+    <string>Dodaj</string>
    </property>
   </action>
  </widget>

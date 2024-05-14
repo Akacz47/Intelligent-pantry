@@ -10,6 +10,9 @@ Settings::Settings(QSqlDatabase* db, int id, UserSettings* us, QWidget *parent)
     ui->setupUi(this);
     ui->kcalSpinBox->setValue(us->maxKcal);
     ui->rfidCheckBox->setChecked(us->rfidBool);
+
+    ui->rfidCheckBox->setEnabled(isRfidConnected());
+
     setWindowTitle("Ustawienia");
 }
 
@@ -32,6 +35,7 @@ void Settings::on_okButton_clicked()
     query.exec();
     us->maxKcal = ui->kcalSpinBox->value();
     us->rfidBool = ui->rfidCheckBox->isChecked();
+    emit updateSettings();
     close();
 }
 
