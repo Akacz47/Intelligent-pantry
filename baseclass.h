@@ -24,6 +24,7 @@ protected:
     void decodeText(QString, QString, QString&);
     bool checkPassword(QString&);
     bool isRfidConnected();
+    bool doesTagExist(QString);
 
 public:
     BaseClass(QSqlDatabase* db, int id);

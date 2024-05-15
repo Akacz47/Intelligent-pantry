@@ -26,9 +26,10 @@ void Ingredients::okButton()
 
 OperationIngredientsStrategy::~OperationIngredientsStrategy() {
     ui = nullptr;
+    delete timer;
+    delete coolDownTimer;
     timer = nullptr;
-    if (useTimer)
-        delete timer;
+    coolDownTimer = nullptr;
 }
 
 void OperationIngredientsStrategy::runNotification(QString text, bool good)
@@ -42,13 +43,49 @@ void OperationIngredientsStrategy::runNotification(QString text, bool good)
         timer->start(3000);
 }
 
+void OperationIngredientsStrategy::setDefaultNotification() {
+    ui->notificationLabel->setStyleSheet("color: green;");
+    ui->notificationLabel->setText("Przybliz tag do czytnika");
+}
+
+QString OperationIngredientsStrategy::byteToString(const BYTE *data, int length)
+{
+    QString result;
+    for (int i = 1; i < length; ++i)
+    {
+        // Dodajemy kolejne bajty do wynikowego QStringa jako szesnastkowe wartości
+        result += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper();
+    }
+    return result;
+}
+
+// For RFID
+void OperationIngredientsStrategy::setProduct(QString product, int type)
+{
+    productName = product;
+    productType = type;
+}
+
 void OperationIngredientsStrategy::setupIngredientUi(Ui::Ingredients *ui)
 {
     this->ui = ui;
+    timer = new QTimer(this);
     if (useTimer){
-        timer = new QTimer(this);
-        connect(timer,&QTimer::timeout,[&]() { timer->stop(); this->ui->notificationLabel->setText(""); }); //[=] jest po to, aby ui było widoczne
+        connect(timer,&QTimer::timeout,[&]() { timer->stop(); this->ui->notificationLabel->setText(""); emit clearedLabel(); }); //[=] jest po to, aby ui było widoczne
     }
+}
+
+void OperationIngredientsStrategy::startExecuteTimer(int mSec)
+{
+    connect(this, &OperationIngredientsStrategy::clearedLabel, this, &OperationIngredientsStrategy::setDefaultNotification);
+    coolDownExecute = mSec;
+    coolDownTimer->start(mSec);
+}
+
+void OperationIngredientsStrategy::stopExecuteTimer()
+{
+    disconnect(this, &OperationIngredientsStrategy::clearedLabel, this, &OperationIngredientsStrategy::setDefaultNotification);
+    coolDownTimer->stop();
 }
 
 AddIngredients::AddIngredients(QSqlDatabase *db, int id) : BaseClass(db,id) {}

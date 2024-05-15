@@ -107,7 +107,7 @@ void MainWindow::connectActionTriggered()
     });
     connect(ui->actionChangePassword,&QAction::triggered,this,[=]() {Account account(db,id,this); OpenWindow(&account);});
 
-    connect(ui->actionBindRfidTag,&QAction::triggered,this,[=]() {Rfid rfid(db,id,new BindTag(db,id,false),this); OpenWindow(&rfid);});
+    connect(ui->actionBindRfidTag,&QAction::triggered,this,[=]() {Rfid rfid(db,id,new BindTag(db,id,true),this); OpenWindow(&rfid);});
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)

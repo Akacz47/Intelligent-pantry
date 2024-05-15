@@ -151,6 +151,19 @@ bool BaseClass::isRfidConnected()
     return true;
 }
 
+bool BaseClass::doesTagExist(QString tagId)
+{
+    QSqlQuery query;
+    query.prepare("SELECT tagId FROM rfid WHERE userId = ? AND tagId = ?");
+    query.addBindValue(id);
+    query.addBindValue(tagId);
+    query.exec();
+    if(query.next()){
+        return true;
+    }
+    return false;
+}
+
 int BaseClass::getResourceQuantity(int resourceId, bool isIngredientFlag) {
     int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
 

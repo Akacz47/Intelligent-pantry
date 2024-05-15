@@ -9,8 +9,18 @@
 #include <QLabel>
 
 class BindTag : public OperationIngredientsStrategy, public BaseClass {
+    Q_OBJECT
+    apiReturn rfidConnection;
+    apiReturn result;
+    HANDLE hScanner;
+    BYTE IDBuffer[200]; //24, 100
+    void writeTag(QString&);
+    void setDefaultNotification();
 public:
     BindTag(QSqlDatabase*, int, bool);
+    ~BindTag();
+    void setProduct(QString, int);
+public slots:
     void execute() override;
 };
 
@@ -25,6 +35,7 @@ public:
 
 private slots:
     void dataValidation();
+    void switchWidgets(bool);
 
 private:
     Ui::Ingredients *ui;

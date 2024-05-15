@@ -18,10 +18,28 @@ public:
     virtual ~OperationIngredientsStrategy();
     OperationIngredientsStrategy(bool useTimer = true) { this->useTimer = useTimer; };
     void setupIngredientUi(Ui::Ingredients* ui);
+
+    // For RFID
+    void setProduct(QString, int);
+    QString byteToString(const BYTE*, int);
+    void startExecuteTimer(int mSec);
+    void stopExecuteTimer();
+    QTimer* coolDownTimer;
+    void setDefaultNotification();
+    int coolDownExecute; //msec
 protected:
     void runNotification(QString, bool);
     QTimer* timer;
     Ui::Ingredients *ui;
+
+    // For RFID
+    QString productName;
+    int productType;
+signals:
+    void clearedLabel();
+
+    // For RFID
+    void tagWritten(bool);
 };
 
 // Konkretna strategia dla dodawania składników
