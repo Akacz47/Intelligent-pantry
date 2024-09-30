@@ -521,8 +521,3 @@ void MainWindow::on_deleteIngrButton_clicked()
     ShowResources();
 }
 
-void MainWindow::on_actionChangePassword_triggered()
-{
-
-}
-

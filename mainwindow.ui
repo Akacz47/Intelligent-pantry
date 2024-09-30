@@ -238,7 +238,7 @@
   </action>
   <action name="actionEraseShoppingList">
    <property name="text">
-    <string>Usuń</string>
+    <string>Wyczyść</string>
    </property>
   </action>
   <action name="actionPrintAddedRecipesToShoppingList">

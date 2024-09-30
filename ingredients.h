@@ -4,6 +4,7 @@
 #include "baseclass.h"
 #include <QDialog>
 #include <QTimer>
+#include <QDebug>
 
 namespace Ui {
 class Ingredients;
@@ -24,12 +25,12 @@ public:
     QString byteToString(const BYTE*, int);
     void startExecuteTimer(int mSec);
     void stopExecuteTimer();
-    QTimer* coolDownTimer;
+    QTimer* coolDownTimer = nullptr;
     void setDefaultNotification();
     int coolDownExecute; //msec
 protected:
     void runNotification(QString, bool);
-    QTimer* timer;
+    QTimer* timer = nullptr;
     Ui::Ingredients *ui;
 
     // For RFID

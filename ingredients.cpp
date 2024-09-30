@@ -1,6 +1,6 @@
 #include "ingredients.h"
 #include "ui_ingredients.h"
-
+#include <QDebug>
 
 Ingredients::Ingredients(OperationIngredientsStrategy* ois, QWidget *parent) :
     QDialog(parent),
@@ -27,7 +27,8 @@ void Ingredients::okButton()
 OperationIngredientsStrategy::~OperationIngredientsStrategy() {
     ui = nullptr;
     delete timer;
-    delete coolDownTimer;
+    if (coolDownTimer != nullptr)
+        delete coolDownTimer;
     timer = nullptr;
     coolDownTimer = nullptr;
 }
@@ -71,7 +72,7 @@ void OperationIngredientsStrategy::setupIngredientUi(Ui::Ingredients *ui)
     this->ui = ui;
     timer = new QTimer(this);
     if (useTimer){
-        connect(timer,&QTimer::timeout,[&]() { timer->stop(); this->ui->notificationLabel->setText(""); emit clearedLabel(); }); //[=] jest po to, aby ui było widoczne
+        connect(timer,&QTimer::timeout,[&]() { timer->stop(); this->ui->notificationLabel->setText(""); emit clearedLabel(); }); //[&] jest po to, aby ui było widoczne
     }
 }
 
