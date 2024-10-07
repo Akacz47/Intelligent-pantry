@@ -8,22 +8,34 @@ Rfid::Rfid(QSqlDatabase* db, int id, OperationIngredientsStrategy* ois, QWidget 
     ui(new Ui::Ingredients)
 {
     ui->setupUi(this);
-    connect(ui->okButton,&QPushButton::clicked,this,&Rfid::dataValidation);
-    connect(strategy,&OperationIngredientsStrategy::tagWritten,this,&Rfid::switchWidgets);
     setWindowTitle("RFID");
     strategy->setupIngredientUi(ui);
+    if (ois->inherits("BindTag")){
+        connect(ui->okButton,&QPushButton::clicked,this,&Rfid::dataValidation);
+        connect(strategy,&OperationIngredientsStrategy::tagWritten,this,&Rfid::switchWidgets);
 
-    //dodaj typ produktu (przepis czy skladnik)
-    ui->ingrNameLabel->setText("Nazwa produktu");
+        //dodaj typ produktu (przepis czy skladnik)
+        ui->ingrNameLabel->setText("Nazwa produktu");
 
-    comboBox = new QComboBox();
-    comboBox->addItem("Składnik");
-    comboBox->addItem("Przepis");
-    comboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
+        comboBox = new QComboBox();
+        comboBox->addItem("Składnik");
+        comboBox->addItem("Przepis");
+        comboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Preferred);
 
-    label = new QLabel("Typ produktu");
-    ui->rfidLayout->addWidget(label);
-    ui->rfidLayout->addWidget(comboBox);
+        label = new QLabel("Typ produktu");
+        ui->rfidLayout->addWidget(label);
+        ui->rfidLayout->addWidget(comboBox);
+    }
+    else{
+        delete ui->ingrNameLabel;
+        delete ui->ingrNameLineEdit;
+        delete ui->okButton;
+        delete ui->rfidLayout;
+
+        strategy->startExecuteTimer(1000);
+        strategy->setDefaultNotification();
+    }
+
 }
 
 void Rfid::switchWidgets(bool enable)
@@ -37,9 +49,12 @@ void Rfid::switchWidgets(bool enable)
 
 Rfid::~Rfid()
 {
+    if (strategy->inherits("BindTag")){
+        delete label;
+        delete comboBox;
+    }
+
     delete strategy;
-    delete label;
-    delete comboBox;
     delete ui;
 }
 
@@ -127,10 +142,63 @@ void BindTag::execute()
                 runNotification("Tag został zapisany",true);
                 emit tagWritten(true);
             }
-            // for (int i = 0; i < nCounter; ++i) {
-            //     qDebug() << "Tag" << i+1 << ":" << byteToString(IDBuffer,13);//5
-            //     // qDebug() << "Tag" << i+1 << ":" << IDBuffer;
-            // }
+
+        } else {
+            qDebug() << "Błąd odczytu EPC NO.: " << result;
+        }
+    }
+
+}
+
+
+
+void UnBindTag::eraseTag(QString& tag)
+{
+    QSqlQuery query;
+    query.prepare("DELETE FROM rfid WHERE tagId = ? AND userId = ?");
+    query.addBindValue(tag);
+    query.addBindValue(id);
+    query.exec();
+}
+
+UnBindTag::UnBindTag(QSqlDatabase *db, int id, bool useTimer) : OperationIngredientsStrategy(useTimer), BaseClass(db,id) {
+    coolDownTimer = new QTimer(this);
+    connect(coolDownTimer, &QTimer::timeout, this, &UnBindTag::execute);
+
+
+    VH_InitUsb(NULL);
+    rfidConnection = VH_ConnectScannerUsb(&hScanner);
+}
+
+UnBindTag::~UnBindTag()
+{
+    stopExecuteTimer();
+
+    delete coolDownTimer;
+    coolDownTimer = nullptr;
+
+    // Odłączenie czytnika
+    rfidConnection = VH_DisconnectScannerUsb(hScanner);
+
+    // Zamknięcie połączenia USB
+    rfidConnection = VH_CloseUsb();
+}
+
+void UnBindTag::execute()
+{
+    if (rfidConnection == _OK) {
+
+        int nCounter = 0;
+        result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
+        if (result == _OK && nCounter == 1) {
+            QString tag = byteToString(IDBuffer,13);//5
+            if(doesTagExist(tag)){
+                eraseTag(tag);
+                runNotification("Tag został usuniety",true);
+            }
+            else
+                runNotification("Taki tag nie jest uzywany",false);
+
         } else {
             qDebug() << "Błąd odczytu EPC NO.: " << result;
         }

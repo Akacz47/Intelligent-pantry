@@ -181,6 +181,8 @@
      <string>RFID</string>
     </property>
     <addaction name="actionBindRfidTag"/>
+    <addaction name="actionUnBindRfidTag"/>
+    <addaction name="separator"/>
     <addaction name="actionStartRfid"/>
     <addaction name="actionStopRfid"/>
    </widget>
@@ -301,6 +303,11 @@
   <action name="actionStopRfid">
    <property name="text">
     <string>Stop</string>
+   </property>
+  </action>
+  <action name="actionUnBindRfidTag">
+   <property name="text">
+    <string>Usun</string>
    </property>
   </action>
  </widget>

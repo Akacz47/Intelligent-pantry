@@ -219,8 +219,9 @@ int BaseClass::getResourceId(QString resourceName, bool& isIngredientFlag) {
 
 int BaseClass::getIngredientId(QString ingredientName) {
     QSqlQuery query;
-    query.prepare("SELECT id FROM ingredients WHERE name = ?");
+    query.prepare("SELECT id FROM ingredients WHERE name = ? AND userId IN (0,?)");
     query.addBindValue(ingredientName);
+    query.addBindValue(id);
     query.exec();
 
     if(query.next()) {
@@ -231,8 +232,9 @@ int BaseClass::getIngredientId(QString ingredientName) {
 
 int BaseClass::getRecipeId(QString recipeName) {
     QSqlQuery query;
-    query.prepare("SELECT id FROM crafting WHERE name = ?");
+    query.prepare("SELECT id FROM crafting WHERE name = ? AND userId IN (0,?)");
     query.addBindValue(recipeName);
+    query.addBindValue(id);
     query.exec();
 
     if(query.next()) {
@@ -243,8 +245,9 @@ int BaseClass::getRecipeId(QString recipeName) {
 
 bool BaseClass::isIngredient(QString resourceName) {
     QSqlQuery query;
-    query.prepare("SELECT id FROM ingredients WHERE name = ?");
+    query.prepare("SELECT id FROM ingredients WHERE name = ? AND userId IN (0,?)");
     query.addBindValue(resourceName);
+    query.addBindValue(id);
     query.exec();
 
     if(query.next()) {
@@ -255,8 +258,9 @@ bool BaseClass::isIngredient(QString resourceName) {
 
 bool BaseClass::isRecipe(QString resourceName) {
     QSqlQuery query;
-    query.prepare("SELECT id FROM crafting WHERE name = ?");
+    query.prepare("SELECT id FROM crafting WHERE name = ? AND userId IN (0,?)");
     query.addBindValue(resourceName);
+    query.addBindValue(id);
     query.exec();
 
     if(query.next()) {
@@ -290,8 +294,9 @@ bool BaseClass::deleteRecipe(int recipeId) {
     db->transaction();
     QSqlQuery query(*db);
 
-    query.prepare("DELETE FROM crafting_ingredients WHERE craftingId = ?");
+    query.prepare("DELETE FROM crafting_ingredients WHERE craftingId = ? AND userId = ?");
     query.addBindValue(recipeId);
+    query.addBindValue(id);
     if(!query.exec()) {
         qDebug() << "Error deleting recipe ingredients:" << query.lastError();
         db->rollback();
@@ -312,8 +317,9 @@ bool BaseClass::deleteRecipe(int recipeId) {
 }
 bool BaseClass::isRecipeUsedInResources(int recipeId) {
     QSqlQuery query(*db);
-    query.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND ingrOrCraftBool = 1");
+    query.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND ingrOrCraftBool = 1 AND userId = ?");
     query.addBindValue(recipeId);
+    query.addBindValue(id);
     if(query.exec() && query.next()) {
         int count = query.value(0).toInt();
         return count > 0;
@@ -323,8 +329,9 @@ bool BaseClass::isRecipeUsedInResources(int recipeId) {
 
 bool BaseClass::isIngredientUsedInRecipes(int ingredientId) {
     QSqlQuery query(*db);
-    query.prepare("SELECT COUNT(*) FROM crafting_ingredients WHERE ingredientId = ?");
+    query.prepare("SELECT COUNT(*) FROM crafting_ingredients WHERE ingredientId = ? AND userId = ?");
     query.addBindValue(ingredientId);
+    query.addBindValue(id);
     if(query.exec() && query.next()) {
         return query.value(0).toInt() > 0;
     }
@@ -332,8 +339,9 @@ bool BaseClass::isIngredientUsedInRecipes(int ingredientId) {
 }
 bool BaseClass::isIngredientUsedInResources(int ingredientId) {
     QSqlQuery query(*db);
-    query.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND ingrOrCraftBool = 0");
+    query.prepare("SELECT COUNT(*) FROM resources WHERE ingrOrCraftId = ? AND ingrOrCraftBool = 0 AND userId = ?");
     query.addBindValue(ingredientId);
+    query.addBindValue(id);
     if(query.exec() && query.next()) {
         return query.value(0).toInt() > 0;
     }

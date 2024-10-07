@@ -108,6 +108,7 @@ void MainWindow::connectActionTriggered()
     connect(ui->actionChangePassword,&QAction::triggered,this,[=]() {Account account(db,id,this); OpenWindow(&account);});
 
     connect(ui->actionBindRfidTag,&QAction::triggered,this,[=]() {Rfid rfid(db,id,new BindTag(db,id,true),this); OpenWindow(&rfid);});
+    connect(ui->actionUnBindRfidTag,&QAction::triggered,this,[=]() {Rfid rfid(db,id,new UnBindTag(db,id,true),this); OpenWindow(&rfid);});
     connect(ui->actionStartRfid,&QAction::triggered,this,&MainWindow::prepareToReadTags);
     connect(ui->actionStopRfid,&QAction::triggered,this,&MainWindow::stopReadingTags);
 }

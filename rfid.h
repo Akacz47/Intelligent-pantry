@@ -24,6 +24,21 @@ public slots:
     void execute() override;
 };
 
+class UnBindTag : public OperationIngredientsStrategy, public BaseClass {
+    Q_OBJECT
+    apiReturn rfidConnection;
+    apiReturn result;
+    HANDLE hScanner;
+    BYTE IDBuffer[200]; //24, 100
+    void eraseTag(QString&);
+    void setDefaultNotification();
+public:
+    UnBindTag(QSqlDatabase*, int, bool);
+    ~UnBindTag();
+public slots:
+    void execute() override;
+};
+
 class Rfid : public QDialog, public BaseClass
 {
     Q_OBJECT
