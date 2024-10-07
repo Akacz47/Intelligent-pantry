@@ -164,6 +164,17 @@ bool BaseClass::doesTagExist(QString tagId)
     return false;
 }
 
+QString BaseClass::byteToString(const BYTE *data, int length)
+{
+    QString result;
+    for (int i = 1; i < length; ++i)
+    {
+        // Dodajemy kolejne bajty do wynikowego QStringa jako szesnastkowe wartości
+        result += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper();
+    }
+    return result;
+}
+
 int BaseClass::getResourceQuantity(int resourceId, bool isIngredientFlag) {
     int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
 

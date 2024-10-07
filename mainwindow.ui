@@ -181,6 +181,8 @@
      <string>RFID</string>
     </property>
     <addaction name="actionBindRfidTag"/>
+    <addaction name="actionStartRfid"/>
+    <addaction name="actionStopRfid"/>
    </widget>
    <addaction name="menuSk_adniki"/>
    <addaction name="menuPrzepisy"/>
@@ -289,6 +291,16 @@
   <action name="actionBindRfidTag">
    <property name="text">
     <string>Dodaj</string>
+   </property>
+  </action>
+  <action name="actionStartRfid">
+   <property name="text">
+    <string>Start</string>
+   </property>
+  </action>
+  <action name="actionStopRfid">
+   <property name="text">
+    <string>Stop</string>
    </property>
   </action>
  </widget>

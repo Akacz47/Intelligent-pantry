@@ -22,7 +22,7 @@ public:
 
     // For RFID
     void setProduct(QString, int);
-    QString byteToString(const BYTE*, int);
+
     void startExecuteTimer(int mSec);
     void stopExecuteTimer();
     QTimer* coolDownTimer = nullptr;

@@ -59,6 +59,24 @@ class MainWindow : public QMainWindow, public BaseClass
     void saveToFile();
     void readFromFile();
 
+    void queryModelToStandardModel();
+
+    //For RFID
+    BYTE IDBuffer[200]; //24, 100
+    apiReturn rfidConnection;
+    apiReturn result;
+    HANDLE hScanner;
+    bool connectToRfid();
+    bool disconnectFromRfid();
+    void prepareToReadTags();
+    void readTags();
+    void stopReadingTags();
+    QString findResourceByTag(const QString&);
+    QVector<QString> extractSegments(const QString&);
+    int nCounterRfid = 0;
+    int additionalColumnsRfid = 0;
+    QTimer* coolDownTimerRfid = nullptr;
+    bool rfidEnabled = false;
 
 public:
     MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent = nullptr);

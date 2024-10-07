@@ -108,6 +108,8 @@ void MainWindow::connectActionTriggered()
     connect(ui->actionChangePassword,&QAction::triggered,this,[=]() {Account account(db,id,this); OpenWindow(&account);});
 
     connect(ui->actionBindRfidTag,&QAction::triggered,this,[=]() {Rfid rfid(db,id,new BindTag(db,id,true),this); OpenWindow(&rfid);});
+    connect(ui->actionStartRfid,&QAction::triggered,this,&MainWindow::prepareToReadTags);
+    connect(ui->actionStopRfid,&QAction::triggered,this,&MainWindow::stopReadingTags);
 }
 
 void MainWindow::ShowIngredientsOfRecipe(QString name)
@@ -286,7 +288,8 @@ void MainWindow::loadSettings()
             //userSettings->rfidBool = query.value(1).toBool();
         }
 
-        userSettings->rfidBool = isRfidConnected();
+        //userSettings->rfidBool = isRfidConnected();
+        userSettings->rfidBool = connectToRfid();
     }
 
     ui->menuRFID->setEnabled(userSettings->rfidBool);
@@ -367,6 +370,185 @@ void MainWindow::ShowResources()
     SetTableView(query);
     currentlyViewedData = CurrentlyViewedData::Resources;
     SuggestButtonSwitchEnable();
+
+    //For RFID
+    queryModelToStandardModel();
+}
+
+void MainWindow::queryModelToStandardModel()
+{
+    modelBezSql->clear();
+    modelBezSql->setColumnCount(model->columnCount());
+    for (int column = 0; column < model->columnCount(); column++){
+        modelBezSql->setHeaderData(column, Qt::Horizontal, model->headerData(column, Qt::Horizontal).toString());
+    }
+    //modelBezSql->setHeaderData(0, Qt::Horizontal, "Nazwa");
+    //modelBezSql->setHeaderData(1, Qt::Horizontal, "Ilość sztuk");
+
+    for (int row = 0; row < model->rowCount(); ++row) {
+        QList<QStandardItem*> rowItems;
+
+        // Pobranie kolumn z sqlModel(model) i dodanie ich do rowItems
+        for (int col = 0; col < model->columnCount(); ++col) {
+            QString data = model->data(model->index(row, col)).toString();
+            rowItems.append(new QStandardItem(data));
+        }
+
+        // Dodanie wiersza do standardModel
+        modelBezSql->appendRow(rowItems);
+        modelBezSql->item(row,0)->setEditable(false);
+        modelBezSql->item(row,1)->setEditable(false);
+    }
+}
+
+bool MainWindow::connectToRfid()
+{
+    VH_InitUsb(NULL);
+    rfidConnection = VH_ConnectScannerUsb(&hScanner);
+    if (rfidConnection != _OK)
+        return false;
+    return true;
+}
+
+bool MainWindow::disconnectFromRfid()
+{
+    if (rfidConnection == _OK)
+    {
+        // Odłączenie czytnika
+        rfidConnection = VH_DisconnectScannerUsb(hScanner);
+
+        // Zamknięcie połączenia USB
+        rfidConnection = VH_CloseUsb();
+        return true;
+    }
+    return false;
+}
+
+void MainWindow::prepareToReadTags()
+{
+    if (rfidConnection == _OK && currentlyViewedData == CurrentlyViewedData::Resources) {
+        coolDownTimerRfid = new QTimer(this);
+        connect(coolDownTimerRfid, &QTimer::timeout, this, &MainWindow::readTags);
+        coolDownTimerRfid->start(2000);
+        rfidEnabled = true;
+    }
+}
+
+void MainWindow::readTags() {
+    // Jezeli nie jestem w zasobach, to zatrzymaj odczyt
+    if (currentlyViewedData != CurrentlyViewedData::Resources) {
+        stopReadingTags();
+        return;
+    }
+
+    // usun poprzednie zasoby odczytane przez rfid
+    if (additionalColumnsRfid > 0) {
+        modelBezSql->removeRows(0,additionalColumnsRfid);
+        additionalColumnsRfid = 0;
+    }
+    result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounterRfid, 0);
+    if (result == _OK) {
+        qDebug() << "Odczytano EPC NO.:";
+
+        // Zamien byte na qstring a nastepnie rozbij ciag tagow na pojedyncze tagi
+        QVector<QString> segments = extractSegments(byteToString(IDBuffer,nCounterRfid*13));
+
+        // qDebug() << "Wyciągnięte segmenty:";
+        // for (const auto& segment : segments) {
+        //     qDebug() << segment;
+        // }
+        qDebug() << nCounterRfid;
+        for (int i=0;i<nCounterRfid;i++){
+            QString name = findResourceByTag(segments[i]);
+
+            if (name != ""){
+                bool foundDuplicatedName = false;
+                for (int i=0;i<additionalColumnsRfid;i++){
+                    if (name == modelBezSql->item(i)->text()){
+                        QString amountOfResourcesQString = modelBezSql->item(i,1)->text();
+                        int amountOfResourcesInt = amountOfResourcesQString.toInt() + 1;
+                        modelBezSql->item(i,1)->setText(QString::number(amountOfResourcesInt));
+                        foundDuplicatedName = true;
+                        break;
+                    }
+                }
+
+                if (foundDuplicatedName == false){
+                    QStandardItem* resource = new QStandardItem(name);
+                    resource->setEditable(false);
+                    resource->setData(QColor(Qt::green).lighter(75),Qt::ForegroundRole);
+
+                    //QStandardItem* item = new QStandardItem(segments[i]);
+                    modelBezSql->insertRow(0, resource);
+                    modelBezSql->setItem(0, 1, new QStandardItem(QString::number(1)));
+                    modelBezSql->item(0,0)->setEditable(false);
+                    modelBezSql->item(0,1)->setEditable(false);
+                    additionalColumnsRfid++;
+                }
+            }
+        }
+
+        ui->tableView->setModel(modelBezSql);
+    } else {
+        qDebug() << "Błąd odczytu EPC NO.:" << result;
+    }
+}
+
+void MainWindow::stopReadingTags()
+{
+    if(currentlyViewedData == CurrentlyViewedData::Resources)
+        modelBezSql->removeRows(0,additionalColumnsRfid);
+
+    rfidEnabled = false;
+    nCounterRfid = 0;
+    additionalColumnsRfid = 0;
+    coolDownTimerRfid->stop();
+    delete coolDownTimerRfid;
+    coolDownTimerRfid = nullptr;
+    //ShowResources();
+}
+
+QString MainWindow::findResourceByTag(const QString &tag)
+{
+    QString question = "SELECT podzapytanie.name AS 'nazwa' FROM "
+                       "( SELECT CASE WHEN rfid.ingrOrCraftBool = 0 THEN ingredients.name ELSE crafting.name END AS name FROM "
+                       "rfid LEFT JOIN crafting ON crafting.id = rfid.ingrOrCraftId "
+                       "LEFT JOIN ingredients ON ingredients.id = rfid.ingrOrCraftId "
+                       "WHERE rfid.userId = ? AND tagId = ? GROUP BY name) AS podzapytanie";
+    QSqlQuery query;
+    query.prepare(question);
+    query.addBindValue(id);
+    query.addBindValue(tag);
+    query.exec();
+    if(query.next()){
+        QString name = query.value(0).toString();
+        return name;
+    }
+    return "";
+}
+
+QVector<QString> MainWindow::extractSegments(const QString &input)
+{
+    QVector<QString> result;
+    int n = input.size();
+    int i = 0;
+
+    while (i < n) {
+        // Sprawdź, czy pozostało przynajmniej 24 znaki do wyciągnięcia
+        if (i + 24 <= n) {
+            result.append(input.mid(i, 24)); // Wyciągnij 24 znaki (QString)
+            i += 24; // Przesuń wskaźnik o 24
+        } else {
+            // Jeśli mniej niż 24 znaki zostały, wyciągnij ile się da
+            result.append(input.mid(i));
+            break; // Koniec ciągu
+        }
+
+        // Odrzuć 2 znaki (jeśli są)
+        i += 2; // Przesuń wskaźnik o kolejne 2 znaki (pomijamy je)
+    }
+
+    return result;
 }
 
 void MainWindow::ShowIngredients()
@@ -395,16 +577,24 @@ void MainWindow::ShowRecipes()
 
 MainWindow::~MainWindow()
 {
+    if(rfidEnabled)
+        stopReadingTags();
+
     delete ui;
     delete model;
     delete modelBezSql;
     delete userSettings;
     if(!logOutClicked)
         loginWindow->deleteLater();
+    if(coolDownTimerRfid) {
+        delete coolDownTimerRfid;
+        coolDownTimerRfid = nullptr;
+    }
     loginWindow = nullptr;
     model = nullptr;
     modelBezSql = nullptr;
     userSettings = nullptr;
+    disconnectFromRfid();
     qDebug() << "Jestem w MainWindow";
 }
 

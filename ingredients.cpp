@@ -49,17 +49,6 @@ void OperationIngredientsStrategy::setDefaultNotification() {
     ui->notificationLabel->setText("Przybliz tag do czytnika");
 }
 
-QString OperationIngredientsStrategy::byteToString(const BYTE *data, int length)
-{
-    QString result;
-    for (int i = 1; i < length; ++i)
-    {
-        // Dodajemy kolejne bajty do wynikowego QStringa jako szesnastkowe wartości
-        result += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper();
-    }
-    return result;
-}
-
 // For RFID
 void OperationIngredientsStrategy::setProduct(QString product, int type)
 {
