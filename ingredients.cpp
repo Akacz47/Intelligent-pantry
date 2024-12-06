@@ -83,12 +83,16 @@ RemoveIngredients::RemoveIngredients(QSqlDatabase *db, int id) : BaseClass(db,id
 
 void AddIngredients::execute() {
     QString name = ui->ingrNameLineEdit->text();
+    QString unit = ui->unitLineEdit->text();
     if(name == "")
         runNotification("Wpisz nazwę składnika", false);
+    else if(unit == "")
+        runNotification("Wpisz nazwę jednostki", false);
     else if(!doesTheIngredientExist(name)) {
         QSqlQuery query;
-        query.prepare("INSERT INTO ingredients (name, userId) VALUES (?, ?)");
+        query.prepare("INSERT INTO ingredients (name, unit, userId) VALUES (?, ?, ?)");
         query.addBindValue(name);
+        query.addBindValue(unit);
         query.addBindValue(id);
         query.exec();
         runNotification("Składnik został dodany do bazy danych", true);

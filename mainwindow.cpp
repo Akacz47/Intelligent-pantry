@@ -461,6 +461,7 @@ void MainWindow::readTags() {
         qDebug() << nCounterRfid;
         for (int i=0;i<nCounterRfid;i++){
             QString name = findResourceByTag(segments[i]);
+            qDebug() << segments[i];
 
             if (name != ""){
                 bool foundDuplicatedName = false;
@@ -554,7 +555,7 @@ QVector<QString> MainWindow::extractSegments(const QString &input)
 
 void MainWindow::ShowIngredients()
 {
-    QString question = "SELECT name AS 'nazwa' FROM ingredients WHERE userId IN (0,?)";
+    QString question = "SELECT name AS 'nazwa', unit AS 'jednostka' FROM ingredients WHERE userId IN (0,?)";
     QSqlQuery query;
     query.prepare(question);
     query.addBindValue(id);
