@@ -10,6 +10,8 @@ Rfid::Rfid(QSqlDatabase* db, int id, OperationIngredientsStrategy* ois, QWidget 
     ui->setupUi(this);
     setWindowTitle("RFID");
     strategy->setupIngredientUi(ui);
+    delete ui->unitLabel;
+    delete ui->unitLineEdit;
     if (ois->inherits("BindTag")){
         connect(ui->okButton,&QPushButton::clicked,this,&Rfid::dataValidation);
         connect(strategy,&OperationIngredientsStrategy::tagWritten,this,&Rfid::switchWidgets);
@@ -132,15 +134,13 @@ void BindTag::execute()
         if (result == _OK && nCounter == 1) {
             qDebug() << "Odczytano EPC NO.:";
             QString tag = byteToString(IDBuffer,13);//5
-            if(doesTagExist(tag)){
-
+            stopExecuteTimer();
+            emit tagWritten(true);
+            if(doesTagExist(tag))
                 runNotification("Taki tag jest juz uzywany",false);
-            }
             else {
                 writeTag(tag);
-                stopExecuteTimer();
                 runNotification("Tag został zapisany",true);
-                emit tagWritten(true);
             }
 
         } else {

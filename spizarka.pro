@@ -63,6 +63,4 @@ FORMS += \
 LIBS += -L$$PWD/sdk/INC/ -lVHLib
 
 INCLUDEPATH += $$PWD/sdk
-DEPENDPATH += $$PWD/sdk
-
-INCLUDEPATH += D:\Qt\Projekty\spizarka\sdk
+#DEPENDPATH += $$PWD/sdk
