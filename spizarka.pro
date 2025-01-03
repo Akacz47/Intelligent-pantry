@@ -16,7 +16,6 @@ SOURCES += \
     login.cpp \
     main.cpp \
     mainwindow.cpp \
-    qaesencryption.cpp \
     recipes.cpp \
     removerecipes.cpp \
     removeresources.cpp \
@@ -32,7 +31,6 @@ HEADERS += \
     ingredients.h \
     login.h \
     mainwindow.h \
-    qaesencryption.h \
     recipes.h \
     removerecipes.h \
     removeresources.h \

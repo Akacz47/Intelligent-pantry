@@ -26,9 +26,7 @@ class Login : public QDialog, public BaseClass
     void open_MainWindow();
     bool check_existing_users(bool checkLoginOnly=false);
     bool isLineEditEmpty();
-    //QByteArray key = "0123456789abcdef";
-    QString iv = "this-is-my-vector";
-    QString key = "0123456789abcdef";
+    QString salt = "twsRmlJermsjpgN";
 
 public:
     Login(QWidget *parent = nullptr);

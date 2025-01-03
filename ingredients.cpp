@@ -11,6 +11,12 @@ Ingredients::Ingredients(OperationIngredientsStrategy* ois, QWidget *parent) :
     connect(ui->okButton,&QPushButton::clicked,this,&Ingredients::okButton);
     setWindowTitle("Składniki");
     strategy->setupIngredientUi(ui);
+
+    //dla usuwania nie potrzebna jest jednostka
+    if(ois->inherits("RemoveIngredients")) {
+        delete ui->unitLabel;
+        delete ui->unitLineEdit;
+    }
 }
 
 Ingredients::~Ingredients()

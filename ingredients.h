@@ -45,6 +45,7 @@ signals:
 
 // Konkretna strategia dla dodawania składników
 class AddIngredients : public OperationIngredientsStrategy, public BaseClass {
+    Q_OBJECT
 public:
     AddIngredients(QSqlDatabase*, int);
     void execute() override;
@@ -52,6 +53,7 @@ public:
 
 // Konkretna strategia dla usuwania składników
 class RemoveIngredients : public OperationIngredientsStrategy, public BaseClass {
+    Q_OBJECT
 public:
     RemoveIngredients(QSqlDatabase*, int);
     void execute() override;

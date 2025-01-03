@@ -1,6 +1,7 @@
 #include "login.h"
 #include "ui_login.h"
 #include <QDebug>
+#include <QCryptographicHash>
 
 Login::Login(QWidget *parent) :
     QDialog(parent),BaseClass(nullptr,-1),
@@ -55,12 +56,14 @@ bool Login::check_existing_users(bool checkLoginOnly)
     while (query.next()) {
         encryptedLogin = query.value(1).toByteArray();
         encryptedPassword = query.value(2).toByteArray();
-        decodeText(key,iv,encryptedLogin);
-        decodeText(key,iv,encryptedPassword);
-        if(checkLoginOnly && login == encryptedLogin)
+
+        QString hashedLogin = (QCryptographicHash::hash((login + salt).toUtf8(), QCryptographicHash::Sha256)).toHex();
+        QString hashedPassword = (QCryptographicHash::hash((password + salt).toUtf8(), QCryptographicHash::Sha256)).toHex();
+
+        if(checkLoginOnly && hashedLogin == encryptedLogin)
             return true;
         else {
-            if(login == encryptedLogin && password == encryptedPassword){
+            if(hashedLogin == encryptedLogin && hashedPassword == encryptedPassword){
                 id = query.value(0).toInt();
                 return true;
             }
@@ -96,7 +99,7 @@ void Login::on_registerButton_clicked()
     QString password = ui->lineEditPassword->text();
     if(isLineEditEmpty())
         QMessageBox::warning(nullptr, "Warning", "Proszę uzupełnić wszystkie pola" ,QMessageBox::Ok);
-    else if(check_existing_users(true))
+    else if(check_existing_users(true)) //na tym etapie zmienna login jest uzupełniona
         QMessageBox::critical(nullptr, "Error", "Taki użytkownik już istnieje", QMessageBox::Ok);
     else if(!checkPassword(password))
         QMessageBox::warning(nullptr, "Warning", "Hasło nie spełnia wymagań, ponieważ musi zawierać minimum:"
@@ -108,13 +111,12 @@ void Login::on_registerButton_clicked()
         QSqlQuery query;
         query.prepare("INSERT INTO users (login, oldPassword, currentPassword, kcal) VALUES (?, ?, ?, ?)");
 
-        QString login = ui->lineEditLogin->text();
-        encodeText(key,iv,login);
-        encodeText(key,iv,password);
+        QString hashedLogin = (QCryptographicHash::hash((login + salt).toUtf8(), QCryptographicHash::Sha256)).toHex();
+        QString hashedPassword = (QCryptographicHash::hash((password + salt).toUtf8(), QCryptographicHash::Sha256)).toHex();
 
-        query.bindValue(0, login);
-        query.bindValue(1, password);
-        query.bindValue(2, password);
+        query.bindValue(0, hashedLogin);
+        query.bindValue(1, hashedPassword);
+        query.bindValue(2, hashedPassword);
         query.bindValue(3, 2000); //srednia ilosc kalorii spozywana przez czlowieka dziennie
         query.exec();
         QMessageBox::information(nullptr, "Baza danych", "Rejestracja przebiegła pomyślnie", QMessageBox::Ok);

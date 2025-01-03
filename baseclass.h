@@ -6,7 +6,6 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
 #include <QCryptographicHash>
-#include "qaesencryption.h"
 #include "VHHandsetAPI.h"
 
 class BaseClass

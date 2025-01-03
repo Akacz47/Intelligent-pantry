@@ -351,7 +351,7 @@ void MainWindow::OpenWindow(QDialog* reference)
 void MainWindow::ShowResources()
 {
     //zapytanie ktore dzialalo, gdy w tabeli sa null'e
-//    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'ilosc sztuk' FROM "
+//    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'sztuki' FROM "
 //                       "( SELECT CASE WHEN resources.craftId IS NULL THEN ingredients.name ELSE crafting.name END AS name, resources.quantity FROM "
 //                       "resources LEFT JOIN crafting ON crafting.id = resources.craftId "
 //                       "LEFT JOIN ingredients ON ingredients.id = resources.ingrId "
@@ -359,7 +359,7 @@ void MainWindow::ShowResources()
 //    question += QString::number(id);
 //    question += " GROUP BY name) AS podzapytanie";
 
-    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'ilosc sztuk' FROM "
+    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'sztuki' FROM "
                        "( SELECT CASE WHEN resources.ingrOrCraftBool = 0 THEN ingredients.name ELSE crafting.name END AS name, resources.quantity FROM "
                        "resources LEFT JOIN crafting ON crafting.id = resources.ingrOrCraftId "
                        "LEFT JOIN ingredients ON ingredients.id = resources.ingrOrCraftId "
