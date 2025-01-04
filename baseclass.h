@@ -19,8 +19,6 @@ protected:
     int searchIngrId(QString);
     int searchCraftId(QString);
     int searchResourceQuantity(QString);
-    void encodeText(QString, QString, QString&);
-    void decodeText(QString, QString, QString&);
     bool checkPassword(QString&);
 
     bool isRfidConnected();

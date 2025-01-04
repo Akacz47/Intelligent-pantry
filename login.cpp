@@ -3,6 +3,7 @@
 #include <QDebug>
 #include <QCryptographicHash>
 
+
 Login::Login(QWidget *parent) :
     QDialog(parent),BaseClass(nullptr,-1),
     ui(new Ui::Login)
@@ -74,6 +75,12 @@ bool Login::check_existing_users(bool checkLoginOnly)
 
 bool Login::isLineEditEmpty()
 {
+    // QSqlQuery query;
+    // query.prepare("INSERT INTO resources (quantity, userId, ingrOrCraftId, ingrOrCraftBool) VALUES (1, 29, 21, 0);");
+    // for(int i=0;i<5000;i++){
+    //     query.exec();
+    // }
+
     if(ui->lineEditLogin->text() == "" || ui->lineEditPassword->text() == "") {
         ui->lineEditLogin->setText("");
         ui->lineEditPassword->setText("");

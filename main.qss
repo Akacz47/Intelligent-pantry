@@ -1,0 +1,88 @@
+/* Przycisk */
+QPushButton {
+    background-color: #3498db;  /* Niebieskie tło */
+    color: white;              /* Biały tekst */
+    border-radius: 6px;        /* Zaokrąglone rogi */
+    padding: 8px;             /* Odstępy wewnętrzne */
+    font-size: 12px;           /* Rozmiar czcionki */
+}
+
+QPushButton:hover {
+    background-color: #2980b9; /* Ciemniejszy niebieski przy najechaniu */
+}
+
+QPushButton:pressed {
+    background-color: #1abc9c; /* Zielony przy wciśnięciu */
+}
+
+QPushButton:disabled {
+    background-color: #95a5a6; /* Szare tło przy wyłączeniu */
+    color: #7f8c8d;            /* Szary tekst */
+}
+
+/* Menu kontekstowe */
+QMenu {
+    background-color: #ecf0f1;  /* Jasnoszare tło */
+    border: 1px solid #bdc3c7;   /* Szara ramka */
+    border-radius: 6px;          /* Zaokrąglone rogi */
+}
+
+QMenu::item {
+    padding: 8px 18px;          /* Odstępy w menu */
+    font-size: 12px;             /* Rozmiar czcionki */
+    color: #2c3e50;              /* Ciemny kolor tekstu */
+}
+
+QMenu::item:selected {
+    background-color: #3498db;   /* Niebieskie tło przy zaznaczeniu */
+    color: white;                /* Biały tekst */
+}
+
+/* Tabela QTableView */
+QTableView {
+    background-color: #ffffff;   /* Białe tło tabeli */
+    border: 1px solid #bdc3c7;   /* Szara ramka */
+    border-radius: 8px;          /* Zaokrąglone rogi */
+    gridline-color: #bdc3c7;     /* Kolor linii siatki */
+}
+
+/* QLineEdit */
+QLineEdit {
+    background-color: #ecf0f1;   /* Jasnoszare tło */
+    border: 1px solid #bdc3c7;    /* Szara ramka */
+    border-radius: 6px;           /* Zaokrąglone rogi */
+    padding: 8px;                /* Odstępy wewnętrzne */
+    font-size: 12px;              /* Rozmiar czcionki */
+    color: #2c3e50;               /* Ciemny tekst */
+}
+
+QLineEdit:focus {
+    border-color: #3498db;       /* Niebieska ramka przy focu */
+}
+
+/* QLabel */
+QLabel {
+    color: #2c3e50;               /* Ciemny kolor tekstu */
+    font-size: 12px;              /* Rozmiar czcionki */
+    padding: 5px;                 /* Odstępy wokół tekstu */
+}
+
+/* Stylizacja dla wszystkich elementów na hover */
+QPushButton:hover, QMenu::item:hover, QTableView::item:hover, QLineEdit:focus {
+    background-color: #ecf0f1;    /* Jasnoszare tło przy najechaniu */
+    color: #2c3e50;               /* Ciemny tekst */
+}
+
+/* QSpinBox */
+QSpinBox {
+    background-color: #ecf0f1;      /* Jasnoszare tło */
+    border: 1px solid #bdc3c7;       /* Szara ramka */
+    border-radius: 8px;              /* Zaokrąglone rogi */
+    padding: 5px;                    /* Odstępy wewnętrzne */
+    font-size: 12px;                 /* Rozmiar czcionki */
+    color: #2c3e50;                  /* Ciemny tekst */
+}
+
+QSpinBox:focus {
+    border-color: #3498db;           /* Niebieska ramka przy fokusu */
+}

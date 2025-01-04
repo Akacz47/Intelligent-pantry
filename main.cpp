@@ -2,7 +2,7 @@
 #include "login.h"
 #include <QApplication>
 #include <QDebug>
-//#include "VHHandsetAPI.h"
+// #include "VHHandsetAPI.h"
 
 // QString byteToString(const BYTE *data, int length)
 // {
@@ -18,6 +18,16 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+
+    QFile file(":/main.qss");  // Jeśli plik jest w zasobach
+    if (!file.open(QFile::ReadOnly | QFile::Text)) {
+        qWarning("Nie można otworzyć pliku stylów!");
+    } else {
+        QTextStream stream(&file);
+        a.setStyleSheet(stream.readAll());
+        file.close();
+    }
+
     Login w;
     w.show();
 

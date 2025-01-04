@@ -1,5 +1,4 @@
 QT       += core gui sql
-
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++17#11
@@ -62,3 +61,9 @@ LIBS += -L$$PWD/sdk/INC/ -lVHLib
 
 INCLUDEPATH += $$PWD/sdk
 #DEPENDPATH += $$PWD/sdk
+
+DISTFILES += \
+    main.qss
+
+RESOURCES += \
+    resources.qrc
