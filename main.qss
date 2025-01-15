@@ -7,17 +7,13 @@ QPushButton {
     font-size: 12px;           /* Rozmiar czcionki */
 }
 
-QPushButton:hover {
-    background-color: #2980b9; /* Ciemniejszy niebieski przy najechaniu */
-}
-
-QPushButton:pressed {
-    background-color: #1abc9c; /* Zielony przy wciśnięciu */
-}
-
 QPushButton:disabled {
     background-color: #95a5a6; /* Szare tło przy wyłączeniu */
     color: #7f8c8d;            /* Szary tekst */
+}
+
+QPushButton:hover {
+    background-color: #1a5276; /* Granatowy, kolor dla hover */
 }
 
 /* Menu kontekstowe */
@@ -38,6 +34,11 @@ QMenu::item:selected {
     color: white;                /* Biały tekst */
 }
 
+QMenu::item:disabled {
+    color: #95a5a6;              /* Szary tekst dla wyłączonych elementów */
+    background-color: transparent; /* Przezroczyste tło */
+}
+
 /* Tabela QTableView */
 QTableView {
     background-color: #ffffff;   /* Białe tło tabeli */
@@ -56,6 +57,11 @@ QLineEdit {
     color: #2c3e50;               /* Ciemny tekst */
 }
 
+QLineEdit:disabled {
+    background-color: #bdc3c7;   /* Ciemniejsze tło dla nieaktywnych */
+    color: #7f8c8d;              /* Jasnoszary tekst */
+}
+
 QLineEdit:focus {
     border-color: #3498db;       /* Niebieska ramka przy focu */
 }
@@ -67,8 +73,12 @@ QLabel {
     padding: 5px;                 /* Odstępy wokół tekstu */
 }
 
-/* Stylizacja dla wszystkich elementów na hover */
-QPushButton:hover, QMenu::item:hover, QTableView::item:hover, QLineEdit:focus {
+QLabel:disabled {
+    color: #95a5a6;               /* Jasnoszary tekst dla nieaktywnych */
+}
+
+/* Stylizacja dla elementów na hover */
+QTableView::item:hover, QLineEdit:focus {
     background-color: #ecf0f1;    /* Jasnoszare tło przy najechaniu */
     color: #2c3e50;               /* Ciemny tekst */
 }
@@ -83,6 +93,49 @@ QSpinBox {
     color: #2c3e50;                  /* Ciemny tekst */
 }
 
+QSpinBox:disabled {
+    background-color: #bdc3c7;   /* Ciemniejsze tło dla nieaktywnych */
+    color: #7f8c8d;              /* Jasnoszary tekst */
+}
+
 QSpinBox:focus {
     border-color: #3498db;           /* Niebieska ramka przy fokusu */
+}
+
+/* QComboBox */
+QComboBox {
+    background-color: #ecf0f1;    /* Jasnoszare tło */
+    border: 1px solid #bdc3c7;    /* Szara ramka */
+    border-radius: 6px;           /* Zaokrąglone rogi */
+    padding: 5px;                 /* Odstępy wewnętrzne */
+    font-size: 12px;              /* Rozmiar czcionki */
+    color: #2c3e50;               /* Ciemny tekst */
+}
+
+QComboBox:disabled {
+    background-color: #bdc3c7;    /* Ciemniejsze tło dla nieaktywnych */
+    color: #7f8c8d;               /* Jasnoszary tekst */
+}
+
+QComboBox::drop-down {
+    subcontrol-origin: padding;   /* Ustawienie miejsca rozwijania */
+    subcontrol-position: top right; /* Pozycja przycisku */
+    width: 20px;                  /* Szerokość przycisku rozwijania */
+    border-left: 1px solid #bdc3c7; /* Ramka oddzielająca */
+    background-color: #ecf0f1;    /* Tło przycisku rozwijania */
+}
+
+QComboBox::down-arrow {
+    width: 20px;                  /* Szerokość strzałki */
+    height: 20px;                 /* Wysokość strzałki */
+    image: url(":/img/arrow.png");  /* Strzałka */
+}
+
+QComboBox QAbstractItemView {
+    background-color: #ecf0f1;    /* Tło listy rozwijanej */
+    border: 1px solid #bdc3c7;    /* Ramka listy rozwijanej */
+    selection-background-color: #3498db; /* Tło zaznaczonego elementu */
+    selection-color: white;       /* Kolor tekstu zaznaczonego elementu */
+    color: #2c3e50;               /* Ciemny tekst dla listy */
+    font-size: 12px;              /* Rozmiar czcionki listy */
 }

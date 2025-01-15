@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qss</file>
+        <file>img/arrow.png</file>
     </qresource>
 </RCC>

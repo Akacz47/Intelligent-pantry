@@ -12,17 +12,6 @@
 #include <QDebug>
 #include "VHHandsetAPI.h"
 
-// QString byteToString(const BYTE *data, int length)
-// {
-//     QString result;
-//     for (int i = 1; i < length; ++i)
-//     {
-//         // Dodajemy kolejne bajty do wynikowego QStringa jako szesnastkowe wartości
-//         result += QString("%1").arg(data[i], 2, 16, QChar('0')).toUpper();
-//     }
-//     return result;
-// }
-
 MainWindow::MainWindow(QString l, int id, QSqlDatabase* db, QDialog *parent) :
     QMainWindow(parent),
     BaseClass(db,id),
@@ -294,6 +283,7 @@ void MainWindow::loadSettings()
     }
 
     ui->menuRFID->setEnabled(userSettings->rfidBool);
+    ui->actionStopRfid->setEnabled(false);
 }
 
 void MainWindow::ShowShoppingList()
@@ -432,6 +422,7 @@ void MainWindow::prepareToReadTags()
         connect(coolDownTimerRfid, &QTimer::timeout, this, &MainWindow::readTags);
         coolDownTimerRfid->start(2000);
         rfidEnabled = true;
+        ui->actionStopRfid->setEnabled(true);
     }
 }
 
@@ -507,6 +498,7 @@ void MainWindow::stopReadingTags()
     coolDownTimerRfid->stop();
     delete coolDownTimerRfid;
     coolDownTimerRfid = nullptr;
+    ui->actionStopRfid->setEnabled(false);
     //ShowResources();
 }
 
