@@ -109,8 +109,8 @@ BindTag::BindTag(QSqlDatabase *db, int id, bool useTimer) : OperationIngredients
     connect(coolDownTimer, &QTimer::timeout, this, &BindTag::execute);
 
 
-    VH_InitUsb(NULL);
-    rfidConnection = VH_ConnectScannerUsb(&hScanner);
+    RfidSdk::VH_InitUsb(NULL);
+    rfidConnection = RfidSdk::VH_ConnectScannerUsb(&hScanner);
 }
 
 BindTag::~BindTag()
@@ -119,10 +119,10 @@ BindTag::~BindTag()
     coolDownTimer = nullptr;
 
     // Odłączenie czytnika
-    rfidConnection = VH_DisconnectScannerUsb(hScanner);
+    rfidConnection = RfidSdk::VH_DisconnectScannerUsb(hScanner);
 
     // Zamknięcie połączenia USB
-    rfidConnection = VH_CloseUsb();
+    rfidConnection = RfidSdk::VH_CloseUsb();
 }
 
 void BindTag::execute()
@@ -130,7 +130,7 @@ void BindTag::execute()
     if (rfidConnection == _OK) {
 
         int nCounter = 0;
-        result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
+        result = RfidSdk::EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
         if (result == _OK && nCounter == 1) {
             qDebug() << "Odczytano EPC NO.:";
             QString tag = byteToString(IDBuffer,13);//5
@@ -166,8 +166,8 @@ UnBindTag::UnBindTag(QSqlDatabase *db, int id, bool useTimer) : OperationIngredi
     connect(coolDownTimer, &QTimer::timeout, this, &UnBindTag::execute);
 
 
-    VH_InitUsb(NULL);
-    rfidConnection = VH_ConnectScannerUsb(&hScanner);
+    RfidSdk::VH_InitUsb(NULL);
+    rfidConnection = RfidSdk::VH_ConnectScannerUsb(&hScanner);
 }
 
 UnBindTag::~UnBindTag()
@@ -178,10 +178,10 @@ UnBindTag::~UnBindTag()
     coolDownTimer = nullptr;
 
     // Odłączenie czytnika
-    rfidConnection = VH_DisconnectScannerUsb(hScanner);
+    rfidConnection = RfidSdk::VH_DisconnectScannerUsb(hScanner);
 
     // Zamknięcie połączenia USB
-    rfidConnection = VH_CloseUsb();
+    rfidConnection = RfidSdk::VH_CloseUsb();
 }
 
 void UnBindTag::execute()
@@ -189,7 +189,7 @@ void UnBindTag::execute()
     if (rfidConnection == _OK) {
 
         int nCounter = 0;
-        result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
+        result = RfidSdk::EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounter, 0);
         if (result == _OK && nCounter == 1) {
             QString tag = byteToString(IDBuffer,13);//5
             if(doesTagExist(tag)){

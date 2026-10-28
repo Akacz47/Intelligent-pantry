@@ -11,6 +11,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 SOURCES += \
     account.cpp \
     baseclass.cpp \
+    database.cpp \
     ingredients.cpp \
     login.cpp \
     main.cpp \
@@ -19,6 +20,7 @@ SOURCES += \
     removerecipes.cpp \
     removeresources.cpp \
     resources.cpp \
+    rfidsdk.cpp \
     rfid.cpp \
     search.cpp \
     settings.cpp \
@@ -27,6 +29,7 @@ SOURCES += \
 HEADERS += \
     account.h \
     baseclass.h \
+    database.h \
     ingredients.h \
     login.h \
     mainwindow.h \
@@ -34,6 +37,7 @@ HEADERS += \
     removerecipes.h \
     removeresources.h \
     resources.h \
+    rfidsdk.h \
     rfid.h \
     search.h \
     settings.h \
@@ -57,7 +61,8 @@ FORMS += \
 #else: unix:!android: target.path = /opt/$${TARGET}/bin
 #!isEmpty(target.path): INSTALLS += target
 
-LIBS += -L$$PWD/sdk/INC/ -lVHLib
+# VHLib is loaded at runtime. The bundled import library is 32-bit and
+# cannot be linked into the 64-bit Qt application.
 
 INCLUDEPATH += $$PWD/sdk
 #DEPENDPATH += $$PWD/sdk

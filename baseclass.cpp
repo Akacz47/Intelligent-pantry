@@ -121,14 +121,14 @@ bool BaseClass::checkPassword(QString& pass)
 
 bool BaseClass::isRfidConnected()
 {
-    VH_InitUsb(NULL);
+    RfidSdk::VH_InitUsb(NULL);
     HANDLE hScanner;
-    apiReturn result = VH_ConnectScannerUsb(&hScanner);
+    apiReturn result = RfidSdk::VH_ConnectScannerUsb(&hScanner);
     if (result != _OK)
         return false;
 
-    VH_DisconnectScannerUsb(hScanner);
-    VH_CloseUsb();
+    RfidSdk::VH_DisconnectScannerUsb(hScanner);
+    RfidSdk::VH_CloseUsb();
     return true;
 }
 

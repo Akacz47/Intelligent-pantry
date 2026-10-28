@@ -6,7 +6,7 @@
 #include <QtSql/QSqlQuery>
 #include <QtSql/QSqlQueryModel>
 #include <QCryptographicHash>
-#include "VHHandsetAPI.h"
+#include "rfidsdk.h"
 
 class BaseClass
 {

@@ -1,1 +1,6 @@
 spizarka.pro.user
+/build
+*.sqlite
+*.sqlite-journal
+*.sqlite-wal
+*.sqlite-shm

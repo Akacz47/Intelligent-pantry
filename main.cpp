@@ -18,6 +18,22 @@
 int main(int argc, char *argv[])
 {
     QApplication a(argc, argv);
+    QCoreApplication::setApplicationName("Spizarka");
+    a.setStyle("Fusion");
+    QPalette palette;
+    palette.setColor(QPalette::Window, QColor("#f3f6fa"));
+    palette.setColor(QPalette::WindowText, QColor("#182b3a"));
+    palette.setColor(QPalette::Base, Qt::white);
+    palette.setColor(QPalette::AlternateBase, QColor("#edf3f9"));
+    palette.setColor(QPalette::Text, QColor("#182b3a"));
+    palette.setColor(QPalette::Button, QColor("#e8eef5"));
+    palette.setColor(QPalette::ButtonText, QColor("#182b3a"));
+    palette.setColor(QPalette::Highlight, QColor("#165d96"));
+    palette.setColor(QPalette::HighlightedText, Qt::white);
+    palette.setColor(QPalette::Disabled, QPalette::Text, QColor("#536171"));
+    palette.setColor(QPalette::Disabled, QPalette::WindowText, QColor("#586777"));
+    palette.setColor(QPalette::Disabled, QPalette::ButtonText, QColor("#536171"));
+    a.setPalette(palette);
 
     QFile file(":/main.qss");  // Jeśli plik jest w zasobach
     if (!file.open(QFile::ReadOnly | QFile::Text)) {

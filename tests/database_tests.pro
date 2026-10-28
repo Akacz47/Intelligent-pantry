@@ -1,0 +1,10 @@
+QT += core sql
+QT -= gui
+CONFIG += console c++17
+CONFIG -= app_bundle
+TEMPLATE = app
+TARGET = database_tests
+INCLUDEPATH += .. ../sdk
+SOURCES += database_tests.cpp ../database.cpp ../baseclass.cpp ../rfidsdk.cpp
+HEADERS += ../database.h ../baseclass.h ../rfidsdk.h
+RESOURCES += ../resources.qrc

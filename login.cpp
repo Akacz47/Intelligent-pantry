@@ -2,6 +2,8 @@
 #include "ui_login.h"
 #include <QDebug>
 #include <QCryptographicHash>
+#include <QSqlError>
+#include "database.h"
 
 
 Login::Login(QWidget *parent) :
@@ -11,13 +13,15 @@ Login::Login(QWidget *parent) :
     ui->setupUi(this);
     mw = nullptr;
     ui->lineEditPassword->setEchoMode(QLineEdit::Password);
-    db = new QSqlDatabase(QSqlDatabase::addDatabase("QMYSQL"));
-    db->setHostName("db.zut.edu.pl");
-    db->setUserName("pa51074");
-    db->setPassword("rauimqxG");
-    db->setDatabaseName("pa51074");
-    if(db->open())
-        qDebug() << "Podłączono do bazy danych";
+    db = new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE"));
+    QString databaseError;
+    if (Database::open(*db, databaseError)) {
+        qDebug() << "Baza SQLite:" << db->databaseName();
+    } else {
+        ui->loginButton->setEnabled(false);
+        ui->registerButton->setEnabled(false);
+        QMessageBox::critical(this, "Baza danych", "Nie można otworzyć lokalnej bazy danych:\n" + databaseError);
+    }
     setWindowTitle("Logowanie");
 }
 
@@ -125,7 +129,11 @@ void Login::on_registerButton_clicked()
         query.bindValue(1, hashedPassword);
         query.bindValue(2, hashedPassword);
         query.bindValue(3, 2000); //srednia ilosc kalorii spozywana przez czlowieka dziennie
-        query.exec();
+        if (!query.exec()) {
+            qWarning() << "Rejestracja:" << query.lastError();
+            QMessageBox::critical(this, "Baza danych", "Nie udało się zapisać użytkownika.");
+            return;
+        }
         QMessageBox::information(nullptr, "Baza danych", "Rejestracja przebiegła pomyślnie", QMessageBox::Ok);
     }
 }

@@ -70,13 +70,25 @@ QString Recipes::buildQuery()
 
 void Recipes::addRecipeToDataBase()
 {
+    const auto saveFailed = [this]() {
+        db->rollback();
+        QMessageBox::critical(this, "Baza danych", "Nie udało się zapisać przepisu i jego składników.");
+    };
+    if (!db->transaction()) {
+        saveFailed();
+        return;
+    }
     //dodaj przepis do bazy danych
     QSqlQuery query;
     query.prepare("INSERT INTO crafting (name, kcal, userId) VALUES (?, ?, ?)");
     query.addBindValue(nameOfRecipe);
     query.addBindValue(ui->kcalSpinBox->value());
     query.addBindValue(id);
-    query.exec();
+    if (!query.exec()) {
+        saveFailed();
+        return;
+    }
+    const int recipeId = query.lastInsertId().toInt();
 
     query.prepare(buildQuery());
     for(int i=0;i<quantityOfIngredients;i++){
@@ -87,7 +99,7 @@ void Recipes::addRecipeToDataBase()
         QSpinBox* spinBox = qobject_cast<QSpinBox*>(widget2);
 
         query.addBindValue(searchIngrId(lineEdit->text()));
-        query.addBindValue(searchCraftId(nameOfRecipe));
+        query.addBindValue(recipeId);
         query.addBindValue(spinBox->value());
         query.addBindValue(id);
 
@@ -96,7 +108,10 @@ void Recipes::addRecipeToDataBase()
         widget2 = nullptr;
         widget = nullptr;
     }
-    query.exec();
+    if (!query.exec() || !db->commit()) {
+        saveFailed();
+        return;
+    }
     QMessageBox::information(this, "Informacja", "Dodano przepis do bazy danych", QMessageBox::Ok);
 
     deleteItemsInVL();
@@ -117,12 +132,11 @@ void Recipes::addRecipeToDataBase()
 bool Recipes::checkQLineEdits()
 {
     bool blad = false;
-    QString* ingredients = new QString[quantityOfIngredients];
+    QStringList ingredients;
     for(int i=0;i<quantityOfIngredients*4;i++){
         QWidget* widget = ui->gridLayout_2->itemAt(i)->widget();
         if (QLineEdit* lineEdit = qobject_cast<QLineEdit*>(widget)) {
             QString name = lineEdit->text();
-            ingredients->append(name);
             if(name == "") {
                 blad = true;
                 QMessageBox::warning(this, "Uwaga", "Uzupelnij wszystkie dane", QMessageBox::Ok);
@@ -130,21 +144,20 @@ bool Recipes::checkQLineEdits()
                 blad = true;
                 QMessageBox::critical(this, "Blad", "Taki skladnik nie istnieje", QMessageBox::Ok);
             }
-            for(int i=0;i<ingredients->length()-1;i++) {
-                if(ingredients->at(i) == name) {
+            for (const QString &ingredient : ingredients) {
+                if (ingredient == name) {
                     blad = true;
                     QMessageBox::warning(this, "Uwaga", "Skladniki nie mogą się powtarzać", QMessageBox::Ok);
                 }
             }
             lineEdit = nullptr;
             if(blad) {
-                delete [] ingredients;
                 return false;
             }
+            ingredients.append(name);
         }
         widget = nullptr;
     }
-    delete [] ingredients;
     return true;
 }
 

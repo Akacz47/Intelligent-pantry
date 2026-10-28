@@ -10,6 +10,7 @@ RemoveResources::RemoveResources(QSqlDatabase* db, int id, QWidget *parent) :
 {
     ui->setupUi(this);
     ui->spinBox->value();
+    connect(ui->cancelButton, SIGNAL(clicked()), this, SLOT(close()));
 
     MainWindow* mainWindow = qobject_cast<MainWindow*>(parent);
     if (mainWindow) {

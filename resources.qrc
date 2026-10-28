@@ -1,6 +1,8 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qss</file>
+        <file>database/schema.sql</file>
+        <file>database/seed.sql</file>
         <file>img/arrow.png</file>
     </qresource>
 </RCC>

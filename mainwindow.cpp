@@ -9,6 +9,8 @@
 #include "search.h"
 #include "account.h"
 #include "rfid.h"
+#include "database.h"
+#include <QSqlError>
 #include <QDebug>
 #include "VHHandsetAPI.h"
 
@@ -41,7 +43,10 @@ void MainWindow::resizeEvent(QResizeEvent *event) {
 
 void MainWindow::SetTableView(QSqlQuery& query)
 {
-    query.exec();
+    if (!query.exec()) {
+        qWarning() << "Błąd wyświetlania danych:" << query.lastError();
+        QMessageBox::critical(this, "Baza danych", "Nie udało się wyświetlić danych z bazy.");
+    }
     model->setQuery(std::move(query));
     ui->tableView->setModel(model);
     resizeRowsInTableView();
@@ -340,22 +345,8 @@ void MainWindow::OpenWindow(QDialog* reference)
 
 void MainWindow::ShowResources()
 {
-    //zapytanie ktore dzialalo, gdy w tabeli sa null'e
-//    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'sztuki' FROM "
-//                       "( SELECT CASE WHEN resources.craftId IS NULL THEN ingredients.name ELSE crafting.name END AS name, resources.quantity FROM "
-//                       "resources LEFT JOIN crafting ON crafting.id = resources.craftId "
-//                       "LEFT JOIN ingredients ON ingredients.id = resources.ingrId "
-//                       "WHERE resources.userId = ";
-//    question += QString::number(id);
-//    question += " GROUP BY name) AS podzapytanie";
-
-    QString question = "SELECT podzapytanie.name AS 'nazwa', podzapytanie.quantity AS 'sztuki' FROM "
-                       "( SELECT CASE WHEN resources.ingrOrCraftBool = 0 THEN ingredients.name ELSE crafting.name END AS name, resources.quantity FROM "
-                       "resources LEFT JOIN crafting ON crafting.id = resources.ingrOrCraftId "
-                       "LEFT JOIN ingredients ON ingredients.id = resources.ingrOrCraftId "
-                       "WHERE resources.userId = ? GROUP BY name) AS podzapytanie";
-    QSqlQuery query;
-    query.prepare(question);
+    QSqlQuery query(*db);
+    query.prepare(Database::resourcesQuery());
     query.addBindValue(id);
 
     SetTableView(query);
@@ -368,6 +359,8 @@ void MainWindow::ShowResources()
 
 void MainWindow::queryModelToStandardModel()
 {
+    while (model->canFetchMore())
+        model->fetchMore();
     modelBezSql->clear();
     modelBezSql->setColumnCount(model->columnCount());
     for (int column = 0; column < model->columnCount(); column++){
@@ -394,8 +387,8 @@ void MainWindow::queryModelToStandardModel()
 
 bool MainWindow::connectToRfid()
 {
-    VH_InitUsb(NULL);
-    rfidConnection = VH_ConnectScannerUsb(&hScanner);
+    RfidSdk::VH_InitUsb(NULL);
+    rfidConnection = RfidSdk::VH_ConnectScannerUsb(&hScanner);
     if (rfidConnection != _OK)
         return false;
     return true;
@@ -406,10 +399,10 @@ bool MainWindow::disconnectFromRfid()
     if (rfidConnection == _OK)
     {
         // Odłączenie czytnika
-        rfidConnection = VH_DisconnectScannerUsb(hScanner);
+        rfidConnection = RfidSdk::VH_DisconnectScannerUsb(hScanner);
 
         // Zamknięcie połączenia USB
-        rfidConnection = VH_CloseUsb();
+        rfidConnection = RfidSdk::VH_CloseUsb();
         return true;
     }
     return false;
@@ -438,7 +431,7 @@ void MainWindow::readTags() {
         modelBezSql->removeRows(0,additionalColumnsRfid);
         additionalColumnsRfid = 0;
     }
-    result = EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounterRfid, 0);
+    result = RfidSdk::EPC1G2_ReadLabelID(hScanner, 1, 0, 0, NULL, IDBuffer, &nCounterRfid, 0);
     if (result == _OK) {
         qDebug() << "Odczytano EPC NO.:";
 
@@ -601,7 +594,7 @@ void MainWindow::on_logOutButton_clicked()
 
 void MainWindow::on_suggetButton_clicked()
 {
-    QString question = "SELECT crafting.name, FLOOR(MIN(resources.quantity / crafting_ingredients.quantity)) AS ilość, kcal "
+    QString question = "SELECT crafting.name, CAST(MIN(1.0 * resources.quantity / crafting_ingredients.quantity) AS INTEGER) AS ilość, kcal "
                        "FROM crafting "
                        "JOIN crafting_ingredients ON crafting.id = crafting_ingredients.craftingId "
                        "JOIN resources ON crafting_ingredients.ingredientId = resources.ingrOrCraftId "
@@ -643,6 +636,8 @@ void MainWindow::resizeRowsInTableView()
 {
     int tableWidth = ui->tableView->width()-17;
     int numColumns = model->columnCount();
+    if (numColumns == 0)
+        return;
     int columnWidth = tableWidth / numColumns;
 
     for (int col = 0; col < numColumns; ++col)

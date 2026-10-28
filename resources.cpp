@@ -33,10 +33,11 @@ void Resources::updateResourceQuantity(int resourceId, int quantity, bool isIngr
 
     int ingrOrCraftBool = isIngredientFlag ? 0 : 1;
     QSqlQuery query;
-    query.prepare("UPDATE resources SET quantity = quantity + ? WHERE ingrOrCraftId = ? AND ingrOrCraftBool = ?");
+    query.prepare("UPDATE resources SET quantity = quantity + ? WHERE ingrOrCraftId = ? AND ingrOrCraftBool = ? AND userId = ?");
     query.addBindValue(quantity);
     query.addBindValue(resourceId);
     query.addBindValue(ingrOrCraftBool);
+    query.addBindValue(id);
 
     if (!query.exec()) {
         QMessageBox::critical(this, "Błąd", "Nie udało się zaktualizować ilości zasobu.");
